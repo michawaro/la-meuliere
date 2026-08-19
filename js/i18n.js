@@ -140,6 +140,14 @@ window.I18N = {
     adminEnter: "Enter",
     adminExit: "Leave admin",
     adminWrong: "Incorrect code.",
+    adminToken: "GitHub token (online save)",
+    adminTokenHelp:
+      'Create a token, tick <code>public_repo</code>, generate, then paste it here once. <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=La%20Meuliere" target="_blank" rel="noopener">Open GitHub</a>.',
+    adminTokenSaved: "A token is already saved on this computer.",
+    adminSaving: "Saving online…",
+    adminSaved: "Saved online",
+    adminSaveFail: "Could not save online",
+    adminNeedToken: "Online save needs a GitHub token",
     availBoard: "Availability",
   },
   fr: {
@@ -284,6 +292,14 @@ window.I18N = {
     adminEnter: "Entrer",
     adminExit: "Quitter l'admin",
     adminWrong: "Code incorrect.",
+    adminToken: "Jeton GitHub (enregistrement en ligne)",
+    adminTokenHelp:
+      'Cochez <code>public_repo</code>, cliquez sur Generate, puis collez le jeton ici (une fois par appareil). <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=La%20Meuliere" target="_blank" rel="noopener">Créer un jeton GitHub</a>.',
+    adminTokenSaved: "Un jeton est déjà enregistré sur cet appareil.",
+    adminSaving: "Enregistrement en ligne…",
+    adminSaved: "Enregistré en ligne",
+    adminSaveFail: "Échec de l'enregistrement en ligne",
+    adminNeedToken: "L'enregistrement en ligne demande un jeton GitHub",
     availBoard: "Disponibilités",
   },
   de: {
@@ -427,6 +443,14 @@ window.I18N = {
     adminEnter: "Eintreten",
     adminExit: "Admin verlassen",
     adminWrong: "Falscher Code.",
+    adminToken: "GitHub-Token (Online-Speicherung)",
+    adminTokenHelp:
+      'Haken bei <code>public_repo</code>, Generate, dann Token hier einfügen. <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=La%20Meuliere" target="_blank" rel="noopener">GitHub öffnen</a>.',
+    adminTokenSaved: "Auf diesem Gerät ist bereits ein Token gespeichert.",
+    adminSaving: "Online speichern…",
+    adminSaved: "Online gespeichert",
+    adminSaveFail: "Online-Speicherung fehlgeschlagen",
+    adminNeedToken: "Online-Speicherung braucht ein GitHub-Token",
     availBoard: "Verfügbarkeit",
   },
   zh: {
@@ -565,6 +589,14 @@ window.I18N = {
     adminEnter: "进入",
     adminExit: "退出管理",
     adminWrong: "代码不正确。",
+    adminToken: "GitHub 令牌（在线保存）",
+    adminTokenHelp:
+      '勾选 <code>public_repo</code>，Generate，然后把令牌粘贴到这里。<a href="https://github.com/settings/tokens/new?scopes=public_repo&description=La%20Meuliere" target="_blank" rel="noopener">打开 GitHub</a>。',
+    adminTokenSaved: "此设备已保存令牌。",
+    adminSaving: "正在在线保存…",
+    adminSaved: "已在线保存",
+    adminSaveFail: "在线保存失败",
+    adminNeedToken: "在线保存需要 GitHub 令牌",
     availBoard: "空房情况",
   },
 };

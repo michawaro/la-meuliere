@@ -3,6 +3,8 @@ window.SITE_CONFIG = {
   contactEmail: "familleange+locatif@gmail.com",
   mediaBase: "",
   adminCode: "4480AaBb!",
+  availRepo: "michawaro/la-meuliere",
+  availPath: "data/availability.json",
   media: {
     place: {
       photos: [

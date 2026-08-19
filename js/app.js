@@ -91,6 +91,7 @@
     refreshCampusPopups();
     wireEnquire();
     paintAvailability();
+    if (saveStatusKey) setSaveStatus(saveStatusKey);
   }
 
   function enquireMailto() {
@@ -651,7 +652,11 @@
   const ROOM_IDS = ["a", "b", "c", "d"];
   const AVAIL_KEY = "bures_avail_v2";
   const ADMIN_KEY = "bures_admin";
+  const TOKEN_KEY = "bures_gh_token";
   let avail = { a: true, b: true, c: true, d: false };
+  let saveTimer = 0;
+  let saveSeq = Promise.resolve();
+  let saveStatusKey = "";
 
   function normalizeAvail(data) {
     const next = { a: false, b: false, c: false, d: false };
@@ -665,6 +670,58 @@
   function seededAvail() {
     if (window.SITE_AVAIL) return normalizeAvail(window.SITE_AVAIL);
     return { a: true, b: true, c: true, d: false };
+  }
+
+  function availRepoParts() {
+    const cfg = window.SITE_CONFIG || {};
+    const raw = String(cfg.availRepo || "michawaro/la-meuliere");
+    const bits = raw.split("/");
+    return {
+      owner: bits[0] || "michawaro",
+      repo: bits[1] || "la-meuliere",
+      path: cfg.availPath || "data/availability.json",
+    };
+  }
+
+  function availApiUrl() {
+    const p = availRepoParts();
+    return (
+      "https://api.github.com/repos/" +
+      p.owner +
+      "/" +
+      p.repo +
+      "/contents/" +
+      p.path
+    );
+  }
+
+  function getAvailToken() {
+    try {
+      return String(localStorage.getItem(TOKEN_KEY) || "").trim();
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function setAvailToken(token) {
+    const value = String(token || "").trim();
+    try {
+      if (value) localStorage.setItem(TOKEN_KEY, value);
+    } catch (e) {}
+  }
+
+  function setSaveStatus(key) {
+    saveStatusKey = key || "";
+    const el = document.getElementById("avail-save-status");
+    if (!el) return;
+    const on = document.body.classList.contains("is-admin") && !!saveStatusKey;
+    el.hidden = !on;
+    el.textContent = on ? t(saveStatusKey) : "";
+    el.classList.toggle("is-ok", saveStatusKey === "adminSaved");
+    el.classList.toggle(
+      "is-err",
+      saveStatusKey === "adminSaveFail" || saveStatusKey === "adminNeedToken"
+    );
   }
 
   function paintAvailability() {
@@ -695,21 +752,145 @@
     };
   }
 
+  function parseAvailPayload(raw, encoding) {
+    if (raw && typeof raw === "object" && !Array.isArray(raw) && ("a" in raw || "b" in raw)) {
+      return normalizeAvail(raw);
+    }
+    if (typeof raw === "string") {
+      try {
+        const text =
+          encoding === "base64"
+            ? decodeURIComponent(escape(atob(raw.replace(/\s/g, ""))))
+            : raw;
+        return normalizeAvail(JSON.parse(text));
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  async function fetchRemoteAvail() {
+    const urls = [
+      { url: availApiUrl() + "?ref=main&t=" + Date.now(), github: true },
+      { url: "data/availability.json?t=" + Date.now(), github: false },
+    ];
+    for (let i = 0; i < urls.length; i++) {
+      try {
+        const headers = urls[i].github
+          ? { Accept: "application/vnd.github.raw+json" }
+          : {};
+        const res = await fetch(urls[i].url, { cache: "no-store", headers: headers });
+        if (!res.ok) continue;
+        const type = res.headers.get("content-type") || "";
+        if (type.indexOf("json") >= 0 || urls[i].github) {
+          const body = await res.json();
+          if (body && body.content && body.encoding === "base64") {
+            const parsed = parseAvailPayload(body.content, "base64");
+            if (parsed) return parsed;
+          } else {
+            const parsed = parseAvailPayload(body);
+            if (parsed) return parsed;
+          }
+        } else {
+          const parsed = parseAvailPayload(await res.text());
+          if (parsed) return parsed;
+        }
+      } catch (e) {}
+    }
+    return null;
+  }
+
   async function loadAvailability() {
-    let remote = null;
-    try {
-      const res = await fetch("data/availability.json?t=" + Date.now(), { cache: "no-store" });
-      if (res.ok) remote = normalizeAvail(await res.json());
-    } catch (e) {}
+    const remote = await fetchRemoteAvail();
     let local = null;
     try {
       local = JSON.parse(localStorage.getItem(AVAIL_KEY) || "null");
       if (local) local = normalizeAvail(local);
     } catch (e) {}
-    if (document.body.classList.contains("is-admin") && local) avail = local;
-    else if (remote) avail = remote;
+    if (remote) avail = remote;
+    else if (local) avail = local;
     else avail = seededAvail();
+    persistAvailability();
     paintAvailability();
+  }
+
+  function toBase64Utf8(text) {
+    return btoa(unescape(encodeURIComponent(text)));
+  }
+
+  async function pushAvailabilityRemote(attempt) {
+    attempt = attempt || 0;
+    const token = getAvailToken();
+    if (!token) {
+      setSaveStatus("adminNeedToken");
+      return false;
+    }
+    setSaveStatus("adminSaving");
+    const bodyText = JSON.stringify({
+      a: avail.a === true,
+      b: avail.b === true,
+      c: avail.c === true,
+      d: avail.d === true,
+    });
+    const headers = {
+      Accept: "application/vnd.github+json",
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+    let sha = "";
+    try {
+      const meta = await fetch(availApiUrl() + "?ref=main&t=" + Date.now(), {
+        cache: "no-store",
+        headers: headers,
+      });
+      if (meta.ok) {
+        const info = await meta.json();
+        sha = info && info.sha ? info.sha : "";
+      }
+    } catch (e) {}
+    const payload = {
+      message: "Update room availability",
+      content: toBase64Utf8(bodyText + "\n"),
+      branch: "main",
+    };
+    if (sha) payload.sha = sha;
+    try {
+      const res = await fetch(availApiUrl(), {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 409 && attempt < 2) {
+        return pushAvailabilityRemote(attempt + 1);
+      }
+      if (!res.ok) {
+        setSaveStatus("adminSaveFail");
+        return false;
+      }
+      persistAvailability();
+      setSaveStatus("adminSaved");
+      return true;
+    } catch (e) {
+      setSaveStatus("adminSaveFail");
+      return false;
+    }
+  }
+
+  function scheduleRemoteSave() {
+    if (!document.body.classList.contains("is-admin")) return;
+    if (!getAvailToken()) {
+      setSaveStatus("adminNeedToken");
+      return;
+    }
+    setSaveStatus("adminSaving");
+    window.clearTimeout(saveTimer);
+    saveTimer = window.setTimeout(function () {
+      saveSeq = saveSeq.then(pushAvailabilityRemote).catch(function () {
+        setSaveStatus("adminSaveFail");
+      });
+    }, 450);
   }
 
   function setAvail(id, on) {
@@ -717,6 +898,7 @@
     avail[id] = !!on;
     persistAvailability();
     paintAvailability();
+    scheduleRemoteSave();
   }
 
   function setAdminMode(on) {
@@ -728,16 +910,31 @@
     const exitBtn = document.getElementById("admin-exit");
     if (openBtn) openBtn.hidden = on;
     if (exitBtn) exitBtn.hidden = !on;
+    if (!on) setSaveStatus("");
+    else if (!getAvailToken()) setSaveStatus("adminNeedToken");
     loadAvailability();
+  }
+
+  function syncAdminTokenFields() {
+    const wrap = document.getElementById("admin-token-wrap");
+    const help = document.getElementById("admin-token-help");
+    const ok = document.getElementById("admin-token-ok");
+    const has = !!getAvailToken();
+    if (wrap) wrap.hidden = has;
+    if (help) help.hidden = has;
+    if (ok) ok.hidden = !has;
   }
 
   function openAdmin() {
     const layer = document.getElementById("admin-dialog");
     const error = document.getElementById("admin-error");
     const input = document.getElementById("admin-code");
+    const tokenInput = document.getElementById("admin-token");
     if (!layer) return;
     if (error) error.hidden = true;
     if (input) input.value = "";
+    if (tokenInput) tokenInput.value = "";
+    syncAdminTokenFields();
     layer.hidden = false;
     document.body.style.overflow = "hidden";
     if (input) input.focus();
@@ -777,6 +974,8 @@
         const code = input ? String(input.value) : "";
         if (expected && code === expected) {
           if (error) error.hidden = true;
+          const tokenInput = document.getElementById("admin-token");
+          if (tokenInput && tokenInput.value) setAvailToken(tokenInput.value);
           setAdminMode(true);
           closeAdmin();
         } else if (error) {

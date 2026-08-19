@@ -1051,6 +1051,22 @@ h1.eyebrow {
   margin: 0 0 12px;
   font-size: 0.88rem;
 }
+.admin-token-help {
+  margin: 0 0 14px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  text-align: left;
+}
+.admin-token-help a { color: inherit; }
+.avail-save-status {
+  flex: 1 0 100%;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.avail-save-status.is-ok { color: #2f6f4e; }
+.avail-save-status.is-err { color: #b42318; }
+body:not(.is-admin) .avail-save-status { display: none; }
 .avail-mark {
   display: inline-flex;
   align-items: center;
