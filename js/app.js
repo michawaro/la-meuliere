@@ -409,13 +409,6 @@
           video.addEventListener("canplay", tryPlay);
         }
       }
-      if (id === "a" || id === "b" || id === "c" || id === "d") {
-        const flag = document.createElement("span");
-        flag.className = "avail-mark plan-avail is-off";
-        flag.setAttribute("data-avail-flag", id);
-        flag.innerHTML = '<span class="avail-dot" aria-hidden="true"></span><span class="avail-text"></span>';
-        cell.appendChild(flag);
-      }
     });
   }
 
