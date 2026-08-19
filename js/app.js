@@ -24,6 +24,8 @@
       if (path) el.src = mediaUrl(path);
     });
   }
+
+  function mediaFor(id) {
     const all = (window.SITE_CONFIG && window.SITE_CONFIG.media) || {};
     const m = all[id] || {};
     return {
