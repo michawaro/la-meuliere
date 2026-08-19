@@ -117,9 +117,9 @@ window.I18N = {
     mapLabel: "Map of nearby campuses",
     homeMap: "La Meulière — Bures-sur-Yvette station",
     enquireEyebrow: "The rooms",
-    enquireTitle: "If you want one of them.",
+    enquireTitle: "To book a room:",
     enquireText:
-      "Availability changes regularly. Get in touch with a short introduction and the room you are interested in — A, B, C or D. To complete a file, please send a passport or national ID card, together with a letter or certificate of enrolment at a school or university. We will reply with all the useful information, in particular the dates of availability. A booking is confirmed once the first month’s rent has been paid in advance.",
+      "Availability changes regularly. Contact us with a short introduction and the room you are interested in — A, B, C or D. To put together an application, please attach an identity document (passport or national ID card) as well as a letter or certificate of enrolment at a school or university. We will reply with all the useful information, in particular the dates of availability. The booking will be taken into account once the first month’s rent has been paid in advance.",
     enquireBtn: "Write",
     enquireOrMail: "If your mail app does not open:",
     enquireNoMail:
@@ -420,9 +420,9 @@ window.I18N = {
     mapLabel: "Karte der nahegelegenen Campus",
     homeMap: "La Meulière — Bahnhof Bures-sur-Yvette",
     enquireEyebrow: "Die Zimmer",
-    enquireTitle: "Wenn Sie eines davon möchten.",
+    enquireTitle: "Um ein Zimmer zu reservieren:",
     enquireText:
-      "Die Verfügbarkeit ändert sich regelmäßig. Schreiben Sie uns mit einer kurzen Vorstellung und dem gewünschten Zimmer — A, B, C oder D. Für die Reservierung benötigen wir einen Reisepass oder Personalausweis sowie eine Immatrikulations- oder Aufnahmebescheinigung einer Schule oder Universität. Wir antworten mit allen nützlichen Angaben, insbesondere zu den Verfügbarkeitsterminen. Die Reservierung gilt, sobald die erste Monatsmiete im Voraus entrichtet ist.",
+      "Die Verfügbarkeiten ändern sich regelmäßig. Kontaktieren Sie uns mit einer kurzen Vorstellung und nennen Sie das Zimmer, das Sie interessiert — A, B, C oder D. Für die Zusammenstellung eines Dossiers fügen Sie bitte einen Ausweis (Reisepass oder Personalausweis) sowie ein Schreiben oder eine Immatrikulationsbescheinigung einer Schule oder Universität bei. Wir antworten mit allen nützlichen Informationen, insbesondere zu den Verfügbarkeitsterminen. Die Reservierung wird berücksichtigt, sobald die erste Monatsmiete im Voraus entrichtet wurde.",
     enquireBtn: "Schreiben",
     enquireOrMail: "Falls sich das Mailprogramm nicht öffnet:",
     enquireNoMail:
@@ -567,9 +567,9 @@ window.I18N = {
     mapLabel: "附近校园地图",
     homeMap: "La Meulière — Bures-sur-Yvette 车站",
     enquireEyebrow: "房间",
-    enquireTitle: "如果您想入住其中一间。",
+    enquireTitle: "预订房间：",
     enquireText:
-      "房源情况会定期变化。请发来简短自我介绍，并注明您意向的房间——A、B、C 或 D。办理预订需提供护照或身份证，以及学校或大学的录取/在读证明。我们会回复所有实用信息，尤其是可入住日期。预付第一个月房租后，预订即告确认。",
+      "房源情况会定期变化。请联系我们，简短自我介绍，并注明您意向的房间——A、B、C 或 D。组成申请材料时，请附上身份证件（护照或身份证），以及学校或大学的入学/在读证明或信函。我们会回复所有实用信息，尤其是可入住日期。预付第一个月房租后，预订即予以登记。",
     enquireBtn: "写信",
     enquireOrMail: "若邮件软件无法打开：",
     enquireNoMail: "准备好后填入联系邮箱，按钮就会启用。",
