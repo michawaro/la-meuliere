@@ -1,0 +1,26 @@
+ASSETS OPTIMISÉS POUR LE WEB
+
+Images
+- 21 fichiers WebP valides.
+- Les JPEG ont été convertis en WebP, avec orientation corrigée.
+- Dimension maximale des nouvelles conversions : 1600 px.
+- Qualité WebP : 82.
+- Les 5 illustrations déjà optimisées ont été conservées telles quelles.
+
+Vidéos
+- 7 fichiers MP4 H.264 / AAC valides.
+- Définition maximale : 720 x 1280 px (format portrait).
+- Encodage H.264 CRF 24, audio AAC 112 kbit/s.
+- Lecture progressive activée (faststart).
+- Les noms et emplacements des vidéos sont inchangés.
+
+Récupération
+- La source de la cuisine contenait une trame endommagée : durée récupérée
+  22,84 s sur 22,96 s.
+- La source du hall contenait une trame endommagée : durée récupérée
+  37,58 s sur 37,75 s.
+
+Intégration
+- Remplacer dans le code les extensions .jpg et .jpeg par .webp.
+- Les chemins des dossiers et les noms sans extension sont conservés.
+- Conserver le ZIP original comme sauvegarde des médias sources.

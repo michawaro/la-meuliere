@@ -1,42 +1,35 @@
-/* Chemins relatifs à index.html. Dossiers : rooms/A–D, shared, place.
-
-   En local (dossier Dropbox), laissez mediaBase vide : les fichiers ./assets sont lus sur le disque.
-   Sur GitHub Pages, coller le lien de partage Dropbox du dossier "assets"
-   (visible par « toute personne disposant du lien »), sans les photos dans Git.
-   Forme attendue : https://dl.dropboxusercontent.com/scl/fo/xxxxxxxx/yyyyyyyy/
-   (remplacer www.dropbox.com par dl.dropboxusercontent.com, et ?dl=0 par rien ou ?raw=1)
-*/
+/* Chemins relatifs à index.html. Médias : assets-optimized-web/assets/ */
 window.SITE_CONFIG = {
   contactEmail: "familleange+locatif@gmail.com",
   mediaBase: "",
   media: {
     place: {
       photos: [
-        "assets/place/NE 1.jpg",
-        "assets/place/NE 2.jpg",
-        "assets/place/SO 1.jpg",
-        "assets/place/SO 2.jpg",
+        "assets-optimized-web/assets/place/NE 1.webp",
+        "assets-optimized-web/assets/place/NE 2.webp",
+        "assets-optimized-web/assets/place/SO 1.webp",
+        "assets-optimized-web/assets/place/SO 2.webp",
       ],
     },
     a: {
       photos: [
-        "assets/rooms/A/Nord 1.jpeg",
-        "assets/rooms/A/Nord 2.jpeg",
-        "assets/rooms/A/Nord 3.jpeg",
+        "assets-optimized-web/assets/rooms/A/Nord 1.webp",
+        "assets-optimized-web/assets/rooms/A/Nord 2.webp",
+        "assets-optimized-web/assets/rooms/A/Nord 3.webp",
       ],
-      video: "assets/rooms/A/VID20260818122708.mp4",
+      video: "assets-optimized-web/assets/rooms/A/VID20260818122708.mp4",
     },
     b: {
       photos: [
-        "assets/rooms/B/IMG20260818123018.jpg",
-        "assets/rooms/B/Est 1.jpeg",
-        "assets/rooms/B/Est 2.jpeg",
+        "assets-optimized-web/assets/rooms/B/IMG20260818123018.webp",
+        "assets-optimized-web/assets/rooms/B/Est 1.webp",
+        "assets-optimized-web/assets/rooms/B/Est 2.webp",
       ],
-      video: "assets/rooms/B/VID20260818123027.mp4",
+      video: "assets-optimized-web/assets/rooms/B/VID20260818123027.mp4",
     },
     c: {
-      photos: ["assets/rooms/C/IMG20260818123006.jpg"],
-      video: "assets/rooms/C/VID20260818122914.mp4",
+      photos: ["assets-optimized-web/assets/rooms/C/IMG20260818123006.webp"],
+      video: "assets-optimized-web/assets/rooms/C/VID20260818122914.mp4",
     },
     d: {
       photos: [],
@@ -44,23 +37,23 @@ window.SITE_CONFIG = {
     },
     kitchen: {
       photos: [
-        "assets/shared/kitchen/IMG20260818123202.jpg",
-        "assets/shared/kitchen/IMG20260818123247.jpg",
-        "assets/shared/kitchen/IMG20260818123239.jpg",
+        "assets-optimized-web/assets/shared/kitchen/IMG20260818123202.webp",
+        "assets-optimized-web/assets/shared/kitchen/IMG20260818123247.webp",
+        "assets-optimized-web/assets/shared/kitchen/IMG20260818123239.webp",
       ],
-      video: "assets/shared/kitchen/VID20260818122518.mp4",
+      video: "assets-optimized-web/assets/shared/kitchen/VID20260818122518.mp4",
     },
     bathroom: {
-      photos: ["assets/shared/bathroom/IMG20260818123225.jpg"],
-      video: "assets/shared/bathroom/VID20260818122458.mp4",
+      photos: ["assets-optimized-web/assets/shared/bathroom/IMG20260818123225.webp"],
+      video: "assets-optimized-web/assets/shared/bathroom/VID20260818122458.mp4",
     },
     toilets: {
-      photos: ["assets/shared/toilets/IMG20260818123147.jpg"],
-      video: "assets/shared/toilets/VID20260818122649.mp4",
+      photos: ["assets-optimized-web/assets/shared/toilets/IMG20260818123147.webp"],
+      video: "assets-optimized-web/assets/shared/toilets/VID20260818122649.mp4",
     },
     hall: {
       photos: [],
-      video: "assets/shared/hall.mp4",
+      video: "assets-optimized-web/assets/shared/hall.mp4",
     },
   },
 };

@@ -2,16 +2,14 @@
 Thumbs.db
 desktop.ini
 
-# Médias : restent dans Dropbox, pas dans Git
-*.jpg
-*.jpeg
-*.png
-*.webp
-*.gif
-*.mp4
-*.mov
-*.JPG
-*.JPEG
-*.PNG
-*.WEBP
-*.MP4
+# Originaux lourds (dossier assets/) — le site utilise assets-optimized-web/
+/assets/**/*.jpg
+/assets/**/*.jpeg
+/assets/**/*.png
+/assets/**/*.webp
+/assets/**/*.gif
+/assets/**/*.mp4
+/assets/**/*.mov
+
+*.zip
+/Bures v1.mp4
