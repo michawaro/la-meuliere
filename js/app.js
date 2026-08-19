@@ -653,10 +653,120 @@
   const AVAIL_KEY = "bures_avail_v2";
   const ADMIN_KEY = "bures_admin";
   const TOKEN_KEY = "bures_gh_token";
+  const SECRET_KEY = "bures_admin_secret";
   let avail = { a: true, b: true, c: true, d: false };
   let saveTimer = 0;
   let saveSeq = Promise.resolve();
   let saveStatusKey = "";
+  let adminSecret = null;
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function bytesToB64(bytes) {
+    const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    let s = "";
+    for (let i = 0; i < arr.length; i++) s += String.fromCharCode(arr[i]);
+    return btoa(s);
+  }
+
+  async function deriveAdminKey(password, salt, iter) {
+    const material = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(password),
+      "PBKDF2",
+      false,
+      ["deriveKey"]
+    );
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: salt, iterations: iter, hash: "SHA-256" },
+      material,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  }
+
+  function vaultUrl() {
+    return ((window.SITE_CONFIG && window.SITE_CONFIG.adminVault) || "data/admin-vault.json") + "?t=" + Date.now();
+  }
+
+  async function fetchAdminVault() {
+    const p = availRepoParts();
+    const api =
+      "https://api.github.com/repos/" +
+      p.owner +
+      "/" +
+      p.repo +
+      "/contents/data/admin-vault.json?ref=main&t=" +
+      Date.now();
+    try {
+      const res = await fetch(api, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github.raw+json" },
+      });
+      if (res.ok) return res.json();
+    } catch (e) {}
+    const res = await fetch(vaultUrl(), { cache: "no-store" });
+    if (!res.ok) throw new Error("vault");
+    return res.json();
+  }
+
+  async function unlockAdmin(password) {
+    const vault = await fetchAdminVault();
+    const key = await deriveAdminKey(password, b64ToBytes(vault.salt), vault.iter || 210000);
+    const pt = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: b64ToBytes(vault.iv) },
+      key,
+      b64ToBytes(vault.ct)
+    );
+    const secret = JSON.parse(new TextDecoder().decode(pt));
+    if (!secret || secret.ok !== true) throw new Error("vault");
+    return secret;
+  }
+
+  async function encryptAdminSecret(password, secret) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iter = 210000;
+    const key = await deriveAdminKey(password, salt, iter);
+    const ct = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      key,
+      new TextEncoder().encode(JSON.stringify(secret))
+    );
+    return {
+      v: 1,
+      kdf: "PBKDF2",
+      hash: "SHA-256",
+      iter: iter,
+      salt: bytesToB64(salt),
+      iv: bytesToB64(iv),
+      ct: bytesToB64(ct),
+    };
+  }
+
+  function rememberAdminSecret(secret) {
+    adminSecret = secret && typeof secret === "object" ? secret : null;
+    try {
+      if (adminSecret) sessionStorage.setItem(SECRET_KEY, JSON.stringify(adminSecret));
+      else sessionStorage.removeItem(SECRET_KEY);
+    } catch (e) {}
+  }
+
+  function restoreAdminSecret() {
+    try {
+      const raw = sessionStorage.getItem(SECRET_KEY);
+      adminSecret = raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      adminSecret = null;
+    }
+    return adminSecret;
+  }
 
   function normalizeAvail(data) {
     const next = { a: false, b: false, c: false, d: false };
@@ -695,7 +805,8 @@
     );
   }
 
-  function getAvailToken() {
+  function getWriteToken() {
+    if (adminSecret && adminSecret.githubToken) return String(adminSecret.githubToken).trim();
     try {
       return String(localStorage.getItem(TOKEN_KEY) || "").trim();
     } catch (e) {
@@ -703,11 +814,76 @@
     }
   }
 
-  function setAvailToken(token) {
-    const value = String(token || "").trim();
+  function githubHeaders(token) {
+    return {
+      Accept: "application/vnd.github+json",
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+  }
+
+  function githubFileUrl(filePath) {
+    const p = availRepoParts();
+    return (
+      "https://api.github.com/repos/" +
+      p.owner +
+      "/" +
+      p.repo +
+      "/contents/" +
+      filePath
+    );
+  }
+
+  async function putGithubFile(filePath, text, token, message, attempt) {
+    attempt = attempt || 0;
+    const url = githubFileUrl(filePath);
+    const headers = githubHeaders(token);
+    let sha = "";
     try {
-      if (value) localStorage.setItem(TOKEN_KEY, value);
+      const meta = await fetch(url + "?ref=main&t=" + Date.now(), {
+        cache: "no-store",
+        headers: headers,
+      });
+      if (meta.ok) {
+        const info = await meta.json();
+        sha = info && info.sha ? info.sha : "";
+      }
     } catch (e) {}
+    const payload = {
+      message: message,
+      content: toBase64Utf8(text),
+      branch: "main",
+    };
+    if (sha) payload.sha = sha;
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify(payload),
+    });
+    if (res.status === 409 && attempt < 2) {
+      return putGithubFile(filePath, text, token, message, attempt + 1);
+    }
+    return res.ok;
+  }
+
+  async function sealAdminVault(password, secret) {
+    const token = secret && secret.githubToken;
+    if (!password || !token) return false;
+    const vault = await encryptAdminSecret(password, secret);
+    const body = JSON.stringify(vault) + "\n";
+    const ok = await putGithubFile(
+      "data/admin-vault.json",
+      body,
+      token,
+      "Seal admin vault"
+    );
+    if (ok) {
+      try {
+        localStorage.removeItem(TOKEN_KEY);
+      } catch (e) {}
+    }
+    return ok;
   }
 
   function setSaveStatus(key) {
@@ -819,59 +995,80 @@
     return btoa(unescape(encodeURIComponent(text)));
   }
 
-  async function pushAvailabilityRemote(attempt) {
-    attempt = attempt || 0;
-    const token = getAvailToken();
+  function availCsv() {
+    const lines = ["room,available"];
+    ROOM_IDS.forEach((id) => {
+      lines.push(id + "," + (avail[id] === true ? "yes" : "no"));
+    });
+    return lines.join("\n") + "\n";
+  }
+
+  function availJson() {
+    return (
+      JSON.stringify({
+        a: avail.a === true,
+        b: avail.b === true,
+        c: avail.c === true,
+        d: avail.d === true,
+      }) + "\n"
+    );
+  }
+
+  async function dispatchAvailabilityWorkflow(token, bodyText) {
+    const p = availRepoParts();
+    const res = await fetch(
+      "https://api.github.com/repos/" +
+        p.owner +
+        "/" +
+        p.repo +
+        "/actions/workflows/availability.yml/dispatches",
+      {
+        method: "POST",
+        headers: githubHeaders(token),
+        body: JSON.stringify({
+          ref: "main",
+          inputs: { payload: bodyText.trim() },
+        }),
+      }
+    );
+    return res.status === 204 || res.ok;
+  }
+
+  async function pushAvailabilityRemote() {
+    const token = getWriteToken();
     if (!token) {
       setSaveStatus("adminNeedToken");
       return false;
     }
     setSaveStatus("adminSaving");
-    const bodyText = JSON.stringify({
-      a: avail.a === true,
-      b: avail.b === true,
-      c: avail.c === true,
-      d: avail.d === true,
-    });
-    const headers = {
-      Accept: "application/vnd.github+json",
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-    let sha = "";
+    const json = availJson();
     try {
-      const meta = await fetch(availApiUrl() + "?ref=main&t=" + Date.now(), {
-        cache: "no-store",
-        headers: headers,
-      });
-      if (meta.ok) {
-        const info = await meta.json();
-        sha = info && info.sha ? info.sha : "";
+      const jsonOk = await putGithubFile(
+        "data/availability.json",
+        json,
+        token,
+        "Update room availability"
+      );
+      if (jsonOk) {
+        await putGithubFile("data/disponibilites.csv", availCsv(), token, "Update room availability table");
+        await putGithubFile(
+          "js/availability.js",
+          "window.SITE_AVAIL = " + json.trim() + ";\n",
+          token,
+          "Update room availability fallback"
+        );
+        persistAvailability();
+        setSaveStatus("adminSaved");
+        return true;
       }
-    } catch (e) {}
-    const payload = {
-      message: "Update room availability",
-      content: toBase64Utf8(bodyText + "\n"),
-      branch: "main",
-    };
-    if (sha) payload.sha = sha;
-    try {
-      const res = await fetch(availApiUrl(), {
-        method: "PUT",
-        headers: headers,
-        body: JSON.stringify(payload),
-      });
-      if (res.status === 409 && attempt < 2) {
-        return pushAvailabilityRemote(attempt + 1);
+      const dispatched = await dispatchAvailabilityWorkflow(token, json);
+      if (dispatched) {
+        persistAvailability();
+        setSaveStatus("adminSaved");
+        return true;
       }
-      if (!res.ok) {
-        setSaveStatus("adminSaveFail");
-        return false;
-      }
-      persistAvailability();
-      setSaveStatus("adminSaved");
-      return true;
+      setSaveStatus("adminSaveFail");
+      return false;
     } catch (e) {
       setSaveStatus("adminSaveFail");
       return false;
@@ -880,7 +1077,7 @@
 
   function scheduleRemoteSave() {
     if (!document.body.classList.contains("is-admin")) return;
-    if (!getAvailToken()) {
+    if (!getWriteToken()) {
       setSaveStatus("adminNeedToken");
       return;
     }
@@ -910,19 +1107,25 @@
     const exitBtn = document.getElementById("admin-exit");
     if (openBtn) openBtn.hidden = on;
     if (exitBtn) exitBtn.hidden = !on;
-    if (!on) setSaveStatus("");
-    else if (!getAvailToken()) setSaveStatus("adminNeedToken");
+    if (!on) {
+      rememberAdminSecret(null);
+      setSaveStatus("");
+    } else if (!getWriteToken()) setSaveStatus("adminNeedToken");
     loadAvailability();
+  }
+
+  function vaultHasWriteToken() {
+    return !!(adminSecret && adminSecret.githubToken);
   }
 
   function syncAdminTokenFields() {
     const wrap = document.getElementById("admin-token-wrap");
     const help = document.getElementById("admin-token-help");
     const ok = document.getElementById("admin-token-ok");
-    const has = !!getAvailToken();
-    if (wrap) wrap.hidden = has;
-    if (help) help.hidden = has;
-    if (ok) ok.hidden = !has;
+    const sealed = vaultHasWriteToken();
+    if (wrap) wrap.hidden = sealed;
+    if (help) help.hidden = sealed;
+    if (ok) ok.hidden = !sealed;
   }
 
   function openAdmin() {
@@ -956,7 +1159,6 @@
     const openBtn = document.getElementById("admin-open");
     const exitBtn = document.getElementById("admin-exit");
     const backdrop = document.getElementById("admin-backdrop");
-    const expected = (window.SITE_CONFIG && window.SITE_CONFIG.adminCode) || "";
     if (openBtn) {
       openBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -969,17 +1171,29 @@
       exitBtn.addEventListener("click", () => setAdminMode(false));
     }
     if (form) {
-      form.addEventListener("submit", (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const code = input ? String(input.value) : "";
-        if (expected && code === expected) {
-          if (error) error.hidden = true;
-          const tokenInput = document.getElementById("admin-token");
-          if (tokenInput && tokenInput.value) setAvailToken(tokenInput.value);
+        const tokenInput = document.getElementById("admin-token");
+        if (error) error.hidden = true;
+        try {
+          const secret = await unlockAdmin(code);
+          const pasted = tokenInput && tokenInput.value ? String(tokenInput.value).trim() : "";
+          let raw = "";
+          try {
+            raw = pasted || String(localStorage.getItem(TOKEN_KEY) || "").trim();
+          } catch (err) {
+            raw = pasted;
+          }
+          if (!secret.githubToken && raw) {
+            secret.githubToken = raw;
+            await sealAdminVault(code, secret);
+          }
+          rememberAdminSecret(secret);
           setAdminMode(true);
           closeAdmin();
-        } else if (error) {
-          error.hidden = false;
+        } catch (err) {
+          if (error) error.hidden = false;
         }
       });
     }
@@ -1001,7 +1215,10 @@
       });
     });
     try {
-      if (sessionStorage.getItem(ADMIN_KEY) === "1") setAdminMode(true);
+      if (sessionStorage.getItem(ADMIN_KEY) === "1") {
+        restoreAdminSecret();
+        setAdminMode(true);
+      }
     } catch (e) {}
     if (location.hash === "#admin") openAdmin();
     document.addEventListener("visibilitychange", () => {

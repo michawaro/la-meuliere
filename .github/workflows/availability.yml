@@ -1,0 +1,62 @@
+name: Update availability
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: JSON {a,b,c,d}
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: availability
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write availability files
+        env:
+          PAYLOAD: ${{ inputs.payload }}
+        run: |
+          python3 << 'PY'
+          import json, os, pathlib
+          raw = os.environ.get("PAYLOAD") or "{}"
+          data = json.loads(raw)
+          avail = {
+            "a": data.get("a") is True,
+            "b": data.get("b") is True,
+            "c": data.get("c") is True,
+            "d": data.get("d") is True,
+          }
+          pathlib.Path("data").mkdir(exist_ok=True)
+          pathlib.Path("data/availability.json").write_text(
+              json.dumps(avail, separators=(",", ":")) + "\n", encoding="utf-8"
+          )
+          pathlib.Path("js").mkdir(exist_ok=True)
+          pathlib.Path("js/availability.js").write_text(
+              "window.SITE_AVAIL = " + json.dumps(avail) + ";\n", encoding="utf-8"
+          )
+          rows = ["room,available"]
+          for room in ("a", "b", "c", "d"):
+              rows.append(room + "," + ("yes" if avail[room] else "no"))
+          pathlib.Path("data/disponibilites.csv").write_text(
+              "\n".join(rows) + "\n", encoding="utf-8"
+          )
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/availability.json data/disponibilites.csv js/availability.js
+          if git diff --cached --quiet; then
+            echo "No availability change"
+            exit 0
+          fi
+          git commit -m "Update room availability"
+          git push
