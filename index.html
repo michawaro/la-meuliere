@@ -7,16 +7,16 @@
     <title>Four rooms in a millstone house — Bures-sur-Yvette</title>
     <meta
       name="description"
-      content="Four student rooms on the second floor of a 1901 millstone house, two minutes from Bures-sur-Yvette station."
+      content="Four student rooms on the second floor of a 1902 millstone house, two minutes from Bures-sur-Yvette station."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@330;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@330;400;500;600&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/styles.css?v=2" />
+    <link rel="stylesheet" href="css/styles.css?v=3" />
   </head>
   <body>
     <div class="grain" aria-hidden="true"></div>
@@ -35,7 +35,7 @@
         <a href="#shared" data-i18n="navShared">Shared spaces</a>
         <a href="#around" data-i18n="navNeighbourhood">The neighbourhood</a>
       </nav>
-      <div class="lang" role="group" aria-label="Language">
+      <div class="lang" role="group" data-i18n-aria="langGroup" aria-label="Language">
         <button type="button" class="lang-btn lang-btn-en is-active" data-lang="en" title="English">
           <span class="flag" aria-hidden="true">EN</span>
           <span class="sr" data-i18n="langEn">English</span>
@@ -43,6 +43,14 @@
         <button type="button" class="lang-btn lang-btn-fr" data-lang="fr" title="Français">
           <span class="flag" aria-hidden="true">FR</span>
           <span class="sr" data-i18n="langFr">Français</span>
+        </button>
+        <button type="button" class="lang-btn lang-btn-de" data-lang="de" title="Deutsch">
+          <span class="flag" aria-hidden="true">DE</span>
+          <span class="sr" data-i18n="langDe">Deutsch</span>
+        </button>
+        <button type="button" class="lang-btn lang-btn-zh" data-lang="zh" title="中文">
+          <span class="flag" aria-hidden="true">中</span>
+          <span class="sr" data-i18n="langZh">中文</span>
         </button>
       </div>
     </header>
@@ -89,7 +97,7 @@
             <span data-i18n="aboutStat1l"></span>
           </li>
           <li>
-            <strong data-i18n="aboutStat2">1901</strong>
+            <strong data-i18n="aboutStat2">1902</strong>
             <span data-i18n="aboutStat2l"></span>
           </li>
           <li>
@@ -163,7 +171,11 @@
               <h3 data-i18n="roomA"></h3>
               <p class="tag" data-i18n="roomATag"></p>
               <p data-i18n="roomAText"></p>
-              <button type="button" class="text-link" data-open="a" data-i18n="learnMore"></button>
+              <div class="room-actions">
+                <button type="button" class="text-link" data-open="a" data-i18n="learnMore"></button>
+                <button type="button" class="text-link rent-toggle" data-rent="a" aria-expanded="false" aria-controls="rent-a" data-i18n="rentBtn"></button>
+              </div>
+              <p class="rent-detail" id="rent-a" hidden data-i18n="rentA"></p>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="a"></div>
@@ -174,7 +186,11 @@
               <h3 data-i18n="roomB"></h3>
               <p class="tag" data-i18n="roomBTag"></p>
               <p data-i18n="roomBText"></p>
-              <button type="button" class="text-link" data-open="b" data-i18n="learnMore"></button>
+              <div class="room-actions">
+                <button type="button" class="text-link" data-open="b" data-i18n="learnMore"></button>
+                <button type="button" class="text-link rent-toggle" data-rent="b" aria-expanded="false" aria-controls="rent-b" data-i18n="rentBtn"></button>
+              </div>
+              <p class="rent-detail" id="rent-b" hidden data-i18n="rentStd"></p>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="b"></div>
@@ -185,7 +201,11 @@
               <h3 data-i18n="roomC"></h3>
               <p class="tag" data-i18n="roomCTag"></p>
               <p data-i18n="roomCText"></p>
-              <button type="button" class="text-link" data-open="c" data-i18n="learnMore"></button>
+              <div class="room-actions">
+                <button type="button" class="text-link" data-open="c" data-i18n="learnMore"></button>
+                <button type="button" class="text-link rent-toggle" data-rent="c" aria-expanded="false" aria-controls="rent-c" data-i18n="rentBtn"></button>
+              </div>
+              <p class="rent-detail" id="rent-c" hidden data-i18n="rentStd"></p>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="c"></div>
@@ -196,7 +216,11 @@
               <h3 data-i18n="roomD"></h3>
               <p class="tag" data-i18n="roomDTag"></p>
               <p data-i18n="roomDText"></p>
-              <button type="button" class="text-link" data-open="d" data-i18n="learnMore"></button>
+              <div class="room-actions">
+                <button type="button" class="text-link" data-open="d" data-i18n="learnMore"></button>
+                <button type="button" class="text-link rent-toggle" data-rent="d" aria-expanded="false" aria-controls="rent-d" data-i18n="rentBtn"></button>
+              </div>
+              <p class="rent-detail" id="rent-d" hidden data-i18n="rentStd"></p>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="d"></div>
@@ -388,6 +412,7 @@
         <p class="viewer-hint" id="viewer-hint" data-i18n="dragHint"></p>
         <div class="viewer-stage" id="viewer-stage"></div>
         <p class="viewer-copy" id="viewer-copy"></p>
+        <p class="rent-detail viewer-rent" id="viewer-rent" hidden></p>
       </div>
     </div>
 

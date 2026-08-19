@@ -16,6 +16,7 @@
   const titleEl = document.getElementById("viewer-title");
   const kickerEl = document.getElementById("viewer-kicker");
   const copyEl = document.getElementById("viewer-copy");
+  const rentEl = document.getElementById("viewer-rent");
   const hintEl = document.getElementById("viewer-hint");
   const closeBtn = document.getElementById("viewer-close");
   const backdrop = document.getElementById("viewer-backdrop");
@@ -28,12 +29,31 @@
   let panoViewer = null;
 
   function t(key) {
-    const lang = document.documentElement.lang === "fr" ? "fr" : "en";
-    return (window.I18N[lang] && window.I18N[lang][key]) || key;
+    const lang = document.documentElement.lang;
+    const pack = (window.I18N && window.I18N[lang]) || (window.I18N && window.I18N.en) || {};
+    return pack[key] || key;
   }
 
   function src(path) {
     return window.assetUrl ? window.assetUrl(path) : encodeURI(path);
+  }
+
+  function rentKey(id) {
+    if (id === "a") return "rentA";
+    if (id === "b" || id === "c" || id === "d") return "rentStd";
+    return "";
+  }
+
+  function fillRent(id) {
+    if (!rentEl) return;
+    const key = rentKey(id);
+    if (!key) {
+      rentEl.hidden = true;
+      rentEl.textContent = "";
+      return;
+    }
+    rentEl.hidden = false;
+    rentEl.textContent = t(key);
   }
 
   function mediaFor(id) {
@@ -337,6 +357,7 @@
     titleEl.textContent = t(meta.title);
     copyEl.textContent = t(meta.copy);
     copyEl.classList.toggle("is-center", id === "hall");
+    fillRent(id);
     buildTabs(id);
     const m = mediaFor(id);
     const mode = preferred === "video" && m.video ? "video" : defaultMode(id);
@@ -363,6 +384,7 @@
     titleEl.textContent = t(meta.title);
     copyEl.textContent = t(meta.copy);
     copyEl.classList.toggle("is-center", current === "hall");
+    fillRent(current);
     buildTabs(current);
     setMode(mode);
   }

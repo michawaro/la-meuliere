@@ -7,7 +7,8 @@
   }
 
   function currentLang() {
-    return document.documentElement.lang === "fr" ? "fr" : "en";
+    const lang = document.documentElement.lang;
+    return window.I18N && window.I18N[lang] ? lang : "en";
   }
 
   function reduceMotion() {
@@ -56,6 +57,8 @@
     });
     document.querySelectorAll(".lang-btn").forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.lang === lang);
+      const titleKey = { en: "langEn", fr: "langFr", de: "langDe", zh: "langZh" }[btn.dataset.lang];
+      if (titleKey && pack[titleKey]) btn.setAttribute("title", pack[titleKey]);
     });
     document.querySelectorAll(".media-label").forEach((el) => {
       if (el.classList.contains("media-label-video") || el.closest(".video-pane")) {
@@ -97,10 +100,13 @@
     const cfg = window.SITE_CONFIG || {};
     if (!cfg.contactEmail) return "";
     const lang = currentLang();
+    const subjects = {
+      fr: "[locatif] Chambre étudiante — La Meulière, Bures-sur-Yvette",
+      de: "[locatif] Studentenzimmer — La Meulière, Bures-sur-Yvette",
+      zh: "[locatif] 学生房间 — La Meulière, Bures-sur-Yvette",
+    };
     const subject =
-      lang === "fr"
-        ? "[locatif] Chambre étudiante — La Meulière, Bures-sur-Yvette"
-        : "[locatif] Student room — La Meulière, Bures-sur-Yvette";
+      subjects[lang] || "[locatif] Student room — La Meulière, Bures-sur-Yvette";
     const email = String(cfg.contactEmail).replace(/\+/g, "%2B");
     return "mailto:" + email + "?subject=" + encodeURIComponent(subject);
   }
@@ -137,6 +143,19 @@
       btn.classList.add("is-disabled");
       if (fallback) fallback.hidden = false;
     }
+  }
+
+  function wireRentToggles() {
+    document.querySelectorAll(".rent-toggle").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-rent");
+        const panel = document.getElementById("rent-" + id);
+        if (!panel) return;
+        const open = panel.hidden;
+        panel.hidden = !open;
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    });
   }
 
   const hoverVideos = [];
@@ -650,13 +669,14 @@
   let lang = "en";
   try {
     const saved = localStorage.getItem(LANG_KEY);
-    if (saved === "fr" || saved === "en") lang = saved;
+    if (saved && window.I18N && window.I18N[saved]) lang = saved;
   } catch (e) {}
   applyAssetSources();
   fillPlacePhotos();
   mountPlan();
   document.querySelectorAll("[data-media]").forEach(mountCardMedia);
   wireLightbox();
+  wireRentToggles();
   initCampusMap();
   applyLang(lang);
 })();
