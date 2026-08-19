@@ -320,7 +320,7 @@ h1.eyebrow {
 }
 .stats li {
   background: var(--paper);
-  border-radius: var(--radius);
+  border-radius: var(--radius, 22px);
   padding: 22px;
   box-shadow: var(--shadow);
   text-align: center;
@@ -583,6 +583,8 @@ h1.eyebrow {
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #1d2a23;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 .campus-illu img {
   width: 100%;
@@ -628,7 +630,7 @@ h1.eyebrow {
 }
 .card {
   background: var(--paper);
-  border-radius: var(--radius);
+  border-radius: var(--radius, 22px);
   padding: 22px;
   box-shadow: var(--shadow);
   overflow: hidden;
@@ -636,7 +638,7 @@ h1.eyebrow {
 }
 .room-block {
   background: var(--paper);
-  border-radius: var(--radius);
+  border-radius: var(--radius, 22px);
   box-shadow: var(--shadow);
   overflow: hidden;
   text-align: center;
@@ -844,7 +846,7 @@ h1.eyebrow {
 }
 .walks div {
   background: var(--paper);
-  border-radius: var(--radius);
+  border-radius: var(--radius, 22px);
   padding: 18px;
   box-shadow: var(--shadow-sm);
   text-align: center;
