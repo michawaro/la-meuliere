@@ -946,11 +946,22 @@
     return null;
   }
 
+  function gistId() {
+    return (window.SITE_CONFIG && window.SITE_CONFIG.availGist) || "";
+  }
+
   async function fetchRemoteAvail() {
-    const urls = [
-      { url: availApiUrl() + "?ref=main&t=" + Date.now(), github: true },
-      { url: "data/availability.json?t=" + Date.now(), github: false },
-    ];
+    const urls = [];
+    const gist = gistId();
+    if (gist) {
+      urls.push({
+        url: "https://gist.githubusercontent.com/michawaro/" + gist + "/raw/availability.json?t=" + Date.now(),
+        github: false,
+      });
+      urls.push({ url: "https://api.github.com/gists/" + gist + "?t=" + Date.now(), gistApi: true });
+    }
+    urls.push({ url: availApiUrl() + "?ref=main&t=" + Date.now(), github: true });
+    urls.push({ url: "data/availability.json?t=" + Date.now(), github: false });
     for (let i = 0; i < urls.length; i++) {
       try {
         const headers = urls[i].github
@@ -958,6 +969,16 @@
           : {};
         const res = await fetch(urls[i].url, { cache: "no-store", headers: headers });
         if (!res.ok) continue;
+        if (urls[i].gistApi) {
+          const body = await res.json();
+          const file =
+            body &&
+            body.files &&
+            (body.files["availability.json"] || body.files["data/availability.json"]);
+          const parsed = parseAvailPayload(file && file.content);
+          if (parsed) return parsed;
+          continue;
+        }
         const type = res.headers.get("content-type") || "";
         if (type.indexOf("json") >= 0 || urls[i].github) {
           const body = await res.json();
@@ -1034,6 +1055,19 @@
     return res.status === 204 || res.ok;
   }
 
+  async function patchAvailabilityGist(token, json) {
+    const gist = gistId();
+    if (!gist || !token) return false;
+    const res = await fetch("https://api.github.com/gists/" + gist, {
+      method: "PATCH",
+      headers: githubHeaders(token),
+      body: JSON.stringify({
+        files: { "availability.json": { content: json.trim() + "\n" } },
+      }),
+    });
+    return res.ok;
+  }
+
   async function pushAvailabilityRemote() {
     const token = getWriteToken();
     if (!token) {
@@ -1043,20 +1077,25 @@
     setSaveStatus("adminSaving");
     const json = availJson();
     try {
+      const gistOk = await patchAvailabilityGist(token, json);
       const jsonOk = await putGithubFile(
         "data/availability.json",
         json,
         token,
         "Update room availability"
       );
-      if (jsonOk) {
-        await putGithubFile("data/disponibilites.csv", availCsv(), token, "Update room availability table");
-        await putGithubFile(
-          "js/availability.js",
-          "window.SITE_AVAIL = " + json.trim() + ";\n",
-          token,
-          "Update room availability fallback"
-        );
+      if (gistOk || jsonOk) {
+        if (jsonOk) {
+          await putGithubFile("data/disponibilites.csv", availCsv(), token, "Update room availability table");
+          await putGithubFile(
+            "js/availability.js",
+            "window.SITE_AVAIL = " + json.trim() + ";\n",
+            token,
+            "Update room availability fallback"
+          );
+        } else {
+          await dispatchAvailabilityWorkflow(token, json);
+        }
         persistAvailability();
         setSaveStatus("adminSaved");
         return true;
@@ -1087,7 +1126,7 @@
       saveSeq = saveSeq.then(pushAvailabilityRemote).catch(function () {
         setSaveStatus("adminSaveFail");
       });
-    }, 450);
+    }, 200);
   }
 
   function setAvail(id, on) {
@@ -1098,7 +1137,14 @@
     scheduleRemoteSave();
   }
 
-  function setAdminMode(on) {
+  async function setAdminMode(on) {
+    if (!on && document.body.classList.contains("is-admin")) {
+      window.clearTimeout(saveTimer);
+      try {
+        await saveSeq;
+        await pushAvailabilityRemote();
+      } catch (e) {}
+    }
     document.body.classList.toggle("is-admin", on);
     try {
       sessionStorage.setItem(ADMIN_KEY, on ? "1" : "");
@@ -1110,7 +1156,7 @@
     if (!on) {
       rememberAdminSecret(null);
       setSaveStatus("");
-    } else if (!getWriteToken()) setSaveStatus("adminNeedToken");
+    }
     loadAvailability();
   }
 
@@ -1132,12 +1178,9 @@
     const layer = document.getElementById("admin-dialog");
     const error = document.getElementById("admin-error");
     const input = document.getElementById("admin-code");
-    const tokenInput = document.getElementById("admin-token");
     if (!layer) return;
     if (error) error.hidden = true;
     if (input) input.value = "";
-    if (tokenInput) tokenInput.value = "";
-    syncAdminTokenFields();
     layer.hidden = false;
     document.body.style.overflow = "hidden";
     if (input) input.focus();
@@ -1174,23 +1217,11 @@
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const code = input ? String(input.value) : "";
-        const tokenInput = document.getElementById("admin-token");
         if (error) error.hidden = true;
         try {
           const secret = await unlockAdmin(code);
-          const pasted = tokenInput && tokenInput.value ? String(tokenInput.value).trim() : "";
-          let raw = "";
-          try {
-            raw = pasted || String(localStorage.getItem(TOKEN_KEY) || "").trim();
-          } catch (err) {
-            raw = pasted;
-          }
-          if (!secret.githubToken && raw) {
-            secret.githubToken = raw;
-            await sealAdminVault(code, secret);
-          }
           rememberAdminSecret(secret);
-          setAdminMode(true);
+          await setAdminMode(true);
           closeAdmin();
         } catch (err) {
           if (error) error.hidden = false;

@@ -5,6 +5,7 @@ window.SITE_CONFIG = {
   availRepo: "michawaro/la-meuliere",
   availPath: "data/availability.json",
   adminVault: "data/admin-vault.json",
+  availGist: "484cee76e7f8cf108e3d40a3da9ed4d8",
   media: {
     place: {
       photos: [

@@ -13,3 +13,5 @@ desktop.ini
 
 *.zip
 /Bures v1.mp4
+tools/.admin-code
+tools/seal-vault.mjs
