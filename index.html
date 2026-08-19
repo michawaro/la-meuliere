@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f3f6f1" />
+    <title>Four rooms in a millstone house — Bures-sur-Yvette</title>
+    <meta
+      name="description"
+      content="Four student rooms on the second floor of a 1901 millstone house, two minutes from Bures-sur-Yvette station."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@330;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>
+          <strong data-i18n="brand">La Meulière</strong>
+          <small data-i18n="brandSub">Bures-sur-Yvette</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#place" data-i18n="navPlace">The house</a>
+        <a href="#rooms" data-i18n="navRooms">The rooms</a>
+        <a href="#shared" data-i18n="navShared">Shared spaces</a>
+        <a href="#around" data-i18n="navNeighbourhood">The neighbourhood</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" class="lang-btn lang-btn-en is-active" data-lang="en" title="English">
+          <span class="flag" aria-hidden="true">EN</span>
+          <span class="sr" data-i18n="langEn">English</span>
+        </button>
+        <button type="button" class="lang-btn lang-btn-fr" data-lang="fr" title="Français">
+          <span class="flag" aria-hidden="true">FR</span>
+          <span class="sr" data-i18n="langFr">Français</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1 class="eyebrow" data-i18n="heroTitle">
+            4 rooms in an authentic millstone house, 2 minutes from the station.
+          </h1>
+          <p class="lead" data-i18n="heroLead">
+            A millstone house in Bures-sur-Yvette, set in a handsome wooded garden. The RER B is right next to it, and Université Paris-Saclay is accessible on foot or by bicycle depending on the buildings. This is a house, not a residence.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#rooms" data-i18n="heroCta">Look at the rooms</a>
+            <a class="btn btn-ghost" href="#around" data-i18n="heroCta2">Location</a>
+          </div>
+        </div>
+        <figure class="hero-card">
+          <img
+            class="hero-photo"
+            src=""
+            data-asset="assets/place/NE 1.jpg"
+            alt="Meulière house with ivy, garden and three dormers, Bures-sur-Yvette"
+          />
+          <figcaption>
+            <span data-i18n="footerNote">Four rooms · second floor · Bures-sur-Yvette</span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="place" class="section">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="aboutEyebrow">The place</p>
+          <h2 data-i18n="aboutTitle">A house with character, thought out for living together.</h2>
+        </div>
+        <div class="prose-grid">
+          <p data-i18n="aboutP1"></p>
+          <p data-i18n="aboutP2"></p>
+        </div>
+        <ul class="stats">
+          <li>
+            <strong data-i18n="aboutStat1">2 min</strong>
+            <span data-i18n="aboutStat1l"></span>
+          </li>
+          <li>
+            <strong data-i18n="aboutStat2">1901</strong>
+            <span data-i18n="aboutStat2l"></span>
+          </li>
+          <li>
+            <strong data-i18n="aboutStat3">4</strong>
+            <span data-i18n="aboutStat3l"></span>
+          </li>
+        </ul>
+        <div class="photo-rail" id="place-photos" data-slot="place"></div>
+      </section>
+
+      <section id="rooms" class="section section-rooms">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="roomsEyebrow">The rooms</p>
+          <h2 data-i18n="roomsTitle">A, B, C, D.</h2>
+          <p class="section-lead" data-i18n="roomsLead"></p>
+        </div>
+        <div class="plan-wrap">
+          <p class="plan-legend" data-i18n="planLegend">Plan de l'étage</p>
+          <p id="plan-title" class="sr">Second-floor plan</p>
+          <div class="plan-board" role="img" aria-labelledby="plan-title">
+            <button type="button" class="plan-cell" data-space="kitchen">
+              <span class="plan-caption">
+                <strong data-i18n="kitchen">Kitchen</strong>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="a">
+              <span class="plan-caption">
+                <strong data-i18n="roomA">Room A</strong>
+                <span data-i18n="roomATag"></span>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="b">
+              <span class="plan-caption">
+                <strong data-i18n="roomB">Room B</strong>
+                <span data-i18n="roomBTag"></span>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="bathroom">
+              <span class="plan-caption">
+                <strong data-i18n="bathroom">Bathroom</strong>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="d">
+              <span class="plan-caption">
+                <strong data-i18n="roomD">Room D</strong>
+                <span data-i18n="roomDTag"></span>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="toilets">
+              <span class="plan-caption">
+                <strong data-i18n="toilets">Toilets</strong>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="hall">
+              <span class="plan-caption">
+                <strong data-i18n="hall">Hall</strong>
+              </span>
+            </button>
+            <button type="button" class="plan-cell" data-space="c">
+              <span class="plan-caption">
+                <strong data-i18n="roomC">Room C</strong>
+                <span data-i18n="roomCTag"></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="room-cards">
+          <article class="room-block" id="space-a">
+            <div class="room-copy">
+              <h3 data-i18n="roomA"></h3>
+              <p class="tag" data-i18n="roomATag"></p>
+              <p data-i18n="roomAText"></p>
+              <button type="button" class="text-link" data-open="a" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="a"></div>
+            </div>
+          </article>
+          <article class="room-block" id="space-b">
+            <div class="room-copy">
+              <h3 data-i18n="roomB"></h3>
+              <p class="tag" data-i18n="roomBTag"></p>
+              <p data-i18n="roomBText"></p>
+              <button type="button" class="text-link" data-open="b" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="b"></div>
+            </div>
+          </article>
+          <article class="room-block" id="space-c">
+            <div class="room-copy">
+              <h3 data-i18n="roomC"></h3>
+              <p class="tag" data-i18n="roomCTag"></p>
+              <p data-i18n="roomCText"></p>
+              <button type="button" class="text-link" data-open="c" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="c"></div>
+            </div>
+          </article>
+          <article class="room-block" id="space-d">
+            <div class="room-copy">
+              <h3 data-i18n="roomD"></h3>
+              <p class="tag" data-i18n="roomDTag"></p>
+              <p data-i18n="roomDText"></p>
+              <button type="button" class="text-link" data-open="d" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="d"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="shared" class="section">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="sharedEyebrow">Shared spaces</p>
+          <h2 data-i18n="sharedTitle"></h2>
+        </div>
+        <div class="shared-grid">
+          <article class="room-block" id="space-kitchen">
+            <div class="room-copy">
+              <h3 data-i18n="kitchen"></h3>
+              <p data-i18n="kitchenText"></p>
+              <button type="button" class="text-link" data-open="kitchen" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="kitchen"></div>
+            </div>
+          </article>
+          <article class="room-block" id="space-bathroom">
+            <div class="room-copy">
+              <h3 data-i18n="bathroom"></h3>
+              <p data-i18n="bathroomText"></p>
+              <button type="button" class="text-link" data-open="bathroom" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="bathroom"></div>
+            </div>
+          </article>
+          <article class="room-block" id="space-toilets">
+            <div class="room-copy">
+              <h3 data-i18n="toilets"></h3>
+              <p data-i18n="toiletsText"></p>
+              <button type="button" class="text-link" data-open="toilets" data-i18n="learnMore"></button>
+            </div>
+            <div class="room-stage">
+              <div class="card-media" data-media="toilets"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="around" class="section">
+        <div class="section-head">
+          <p class="eyebrow" data-i18n="aroundEyebrow">The neighbourhood</p>
+          <h2 data-i18n="aroundTitle"></h2>
+        </div>
+        <p class="section-lead" data-i18n="aroundP1"></p>
+        <div class="walks">
+          <div>
+            <strong data-i18n="walkStationT"></strong>
+            <span data-i18n="walkStation"></span>
+          </div>
+          <div>
+            <strong data-i18n="walkIcoT"></strong>
+            <span data-i18n="walkIco"></span>
+          </div>
+          <div>
+            <strong data-i18n="walkCampusT"></strong>
+            <span data-i18n="walkCampus"></span>
+          </div>
+        </div>
+        <div class="around-cards">
+          <article class="card campus-card">
+            <figure class="campus-illu">
+              <img
+                src=""
+                data-asset="assets/building/1 ico-bures-sur-yvette.webp"
+                data-i18n-alt="aroundIcoAlt"
+                alt="Illustration of the Institut et Campus d'Optique in Bures-sur-Yvette"
+                width="960"
+                height="720"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="campus-copy">
+              <h3 class="campus-title" tabindex="0">
+                <svg class="campus-pin pin-ico" viewBox="0 0 24 32" aria-hidden="true"><path fill="currentColor" d="M12 0C5.9 0 1 5.2 1 11.6 1 20.2 12 32 12 32s11-11.8 11-20.4C23 5.2 18.1 0 12 0z"/><circle cx="12" cy="11.4" r="3.6" fill="#fff"/></svg>
+                <span data-i18n="aroundIcoTitle"></span>
+              </h3>
+              <p data-i18n="aroundIco"></p>
+            </div>
+          </article>
+          <article class="card campus-card">
+            <figure class="campus-illu">
+              <img
+                src=""
+                data-asset="assets/building/2 universite-paris-saclay.webp"
+                data-i18n-alt="aroundUniAlt"
+                alt="Illustration of Université Paris-Saclay"
+                width="960"
+                height="720"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="campus-copy">
+              <h3 class="campus-title" tabindex="0">
+                <svg class="campus-pin pin-uni" viewBox="0 0 24 32" aria-hidden="true"><path fill="currentColor" d="M12 0C5.9 0 1 5.2 1 11.6 1 20.2 12 32 12 32s11-11.8 11-20.4C23 5.2 18.1 0 12 0z"/><circle cx="12" cy="11.4" r="3.6" fill="#fff"/></svg>
+                <span data-i18n="aroundUniTitle"></span>
+              </h3>
+              <p data-i18n="aroundUni"></p>
+            </div>
+          </article>
+          <article class="card campus-card">
+            <figure class="campus-illu">
+              <img
+                src=""
+                data-asset="assets/building/3 ecole-polytechnique.webp"
+                data-i18n-alt="aroundLifeAlt"
+                alt="Illustration of École Polytechnique"
+                width="960"
+                height="720"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="campus-copy">
+              <h3 class="campus-title" tabindex="0">
+                <svg class="campus-pin pin-x" viewBox="0 0 24 32" aria-hidden="true"><path fill="currentColor" d="M12 0C5.9 0 1 5.2 1 11.6 1 20.2 12 32 12 32s11-11.8 11-20.4C23 5.2 18.1 0 12 0z"/><circle cx="12" cy="11.4" r="3.6" fill="#fff"/></svg>
+                <span data-i18n="aroundLifeTitle"></span>
+              </h3>
+              <p data-i18n="aroundLife"></p>
+            </div>
+          </article>
+          <article class="card campus-card">
+            <figure class="campus-illu">
+              <img
+                src=""
+                data-asset="assets/building/cea-paris-saclay.webp"
+                data-i18n-alt="aroundCeaAlt"
+                alt="Illustration of CEA Paris-Saclay"
+                width="960"
+                height="720"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+            <div class="campus-copy">
+              <h3 class="campus-title" tabindex="0">
+                <svg class="campus-pin pin-cea" viewBox="0 0 24 32" aria-hidden="true"><path fill="currentColor" d="M12 0C5.9 0 1 5.2 1 11.6 1 20.2 12 32 12 32s11-11.8 11-20.4C23 5.2 18.1 0 12 0z"/><circle cx="12" cy="11.4" r="3.6" fill="#fff"/></svg>
+                <span data-i18n="aroundCeaTitle"></span>
+              </h3>
+              <p data-i18n="aroundCea"></p>
+            </div>
+          </article>
+        </div>
+        <div class="map-frame" id="campus-map" role="region" data-i18n-aria="mapLabel" aria-label="Map of nearby campuses"></div>
+      </section>
+
+      <section id="enquire" class="section section-enquire">
+        <div class="enquire-card">
+          <p class="eyebrow" data-i18n="enquireEyebrow">The rooms</p>
+          <h2 data-i18n="enquireTitle"></h2>
+          <p data-i18n="enquireText"></p>
+          <a class="btn btn-primary" id="enquire-btn" data-i18n="enquireBtn" href="mailto:familleange%2Blocatif@gmail.com">Write</a>
+          <p class="enquire-mail">
+            <span data-i18n="enquireOrMail">If your mail app does not open:</span>
+            <a id="enquire-mail-link">familleange@gmail.com</a>
+          </p>
+          <p class="muted" id="enquire-fallback" hidden data-i18n="enquireNoMail"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span data-i18n="footerNote"></span>
+    </footer>
+
+    <div class="viewer" id="viewer" hidden>
+      <button type="button" class="viewer-backdrop" id="viewer-backdrop" data-i18n-aria="close" aria-label="Close"></button>
+      <div class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
+        <div class="viewer-bar">
+          <div>
+            <p class="eyebrow" id="viewer-kicker"></p>
+            <h2 id="viewer-title"></h2>
+          </div>
+          <div class="viewer-tabs" id="viewer-tabs"></div>
+          <button type="button" class="btn-close" id="viewer-close">
+            <span data-i18n="close">Close</span>
+          </button>
+        </div>
+        <p class="viewer-hint" id="viewer-hint" data-i18n="dragHint"></p>
+        <div class="viewer-stage" id="viewer-stage"></div>
+        <p class="viewer-copy" id="viewer-copy"></p>
+      </div>
+    </div>
+
+    <div class="lightbox" id="lightbox" hidden>
+      <button type="button" class="lightbox-backdrop" id="lightbox-backdrop" data-i18n-aria="close" aria-label="Close"></button>
+      <figure class="lightbox-panel">
+        <img id="lightbox-img" alt="" />
+        <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous">‹</button>
+        <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next">›</button>
+        <button type="button" class="btn-close lightbox-close" id="lightbox-close">
+          <span data-i18n="close">Close</span>
+        </button>
+      </figure>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/viewer.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

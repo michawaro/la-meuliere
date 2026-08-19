@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Médias : restent dans Dropbox, pas dans Git
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.mp4
+*.mov
+*.JPG
+*.JPEG
+*.PNG
+*.WEBP
+*.MP4
