@@ -410,9 +410,10 @@
         }
       }
       if (id === "a" || id === "b" || id === "c" || id === "d") {
-        const flag = document.createElement("strong");
-        flag.className = "avail-flag plan-avail is-off";
+        const flag = document.createElement("span");
+        flag.className = "avail-mark plan-avail is-off";
         flag.setAttribute("data-avail-flag", id);
+        flag.innerHTML = '<span class="avail-dot" aria-hidden="true"></span><span class="avail-text"></span>';
         cell.appendChild(flag);
       }
     });
@@ -655,9 +656,9 @@
   }
 
   const ROOM_IDS = ["a", "b", "c", "d"];
-  const AVAIL_KEY = "bures_avail";
+  const AVAIL_KEY = "bures_avail_v2";
   const ADMIN_KEY = "bures_admin";
-  let avail = { a: false, b: false, c: false, d: false };
+  let avail = { a: true, b: true, c: true, d: false };
 
   function normalizeAvail(data) {
     const next = { a: false, b: false, c: false, d: false };
@@ -668,13 +669,21 @@
     return next;
   }
 
+  function seededAvail() {
+    if (window.SITE_AVAIL) return normalizeAvail(window.SITE_AVAIL);
+    return { a: true, b: true, c: true, d: false };
+  }
+
   function paintAvailability() {
     ROOM_IDS.forEach((id) => {
       const on = avail[id] === true;
       document.querySelectorAll('[data-avail-flag="' + id + '"]').forEach((el) => {
         el.classList.toggle("is-on", on);
         el.classList.toggle("is-off", !on);
-        el.textContent = on ? t("available") : t("unavailable");
+        const label = el.querySelector(".avail-text");
+        const word = on ? t("available") : t("unavailable");
+        if (label) label.textContent = word;
+        else el.textContent = word;
       });
       const input = document.querySelector('[data-avail-input="' + id + '"]');
       if (input) input.checked = on;
@@ -685,6 +694,12 @@
     try {
       localStorage.setItem(AVAIL_KEY, JSON.stringify(avail));
     } catch (e) {}
+    window.SITE_AVAIL = {
+      a: avail.a,
+      b: avail.b,
+      c: avail.c,
+      d: avail.d,
+    };
   }
 
   async function loadAvailability() {
@@ -700,8 +715,7 @@
     } catch (e) {}
     if (document.body.classList.contains("is-admin") && local) avail = local;
     else if (remote) avail = remote;
-    else if (local) avail = local;
-    else avail = { a: false, b: false, c: false, d: false };
+    else avail = seededAvail();
     paintAvailability();
   }
 
@@ -724,23 +738,43 @@
     loadAvailability();
   }
 
+  function openAdmin() {
+    const layer = document.getElementById("admin-dialog");
+    const error = document.getElementById("admin-error");
+    const input = document.getElementById("admin-code");
+    if (!layer) return;
+    if (error) error.hidden = true;
+    if (input) input.value = "";
+    layer.hidden = false;
+    document.body.style.overflow = "hidden";
+    if (input) input.focus();
+  }
+
+  function closeAdmin() {
+    const layer = document.getElementById("admin-dialog");
+    if (layer) layer.hidden = true;
+    if (!document.getElementById("lightbox") || document.getElementById("lightbox").hasAttribute("hidden")) {
+      document.body.style.overflow = "";
+    }
+  }
+
   function wireAdmin() {
-    const dialog = document.getElementById("admin-dialog");
+    const layer = document.getElementById("admin-dialog");
     const form = document.getElementById("admin-form");
     const input = document.getElementById("admin-code");
     const error = document.getElementById("admin-error");
     const openBtn = document.getElementById("admin-open");
     const exitBtn = document.getElementById("admin-exit");
+    const backdrop = document.getElementById("admin-backdrop");
     const expected = (window.SITE_CONFIG && window.SITE_CONFIG.adminCode) || "";
-    if (openBtn && dialog) {
-      openBtn.addEventListener("click", () => {
-        if (error) error.hidden = true;
-        if (input) input.value = "";
-        if (dialog.showModal) dialog.showModal();
-        else dialog.setAttribute("open", "");
-        if (input) input.focus();
+    if (openBtn) {
+      openBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openAdmin();
       });
     }
+    if (backdrop) backdrop.addEventListener("click", closeAdmin);
     if (exitBtn) {
       exitBtn.addEventListener("click", () => setAdminMode(false));
     }
@@ -751,18 +785,19 @@
         if (expected && code === expected) {
           if (error) error.hidden = true;
           setAdminMode(true);
-          if (dialog.close) dialog.close();
-          else dialog.removeAttribute("open");
+          closeAdmin();
         } else if (error) {
           error.hidden = false;
         }
       });
     }
-    if (dialog) {
-      dialog.addEventListener("click", (e) => {
-        if (e.target === dialog && dialog.close) dialog.close();
-      });
-    }
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (layer && !layer.hidden) {
+        e.preventDefault();
+        closeAdmin();
+      }
+    });
     document.querySelectorAll("[data-avail-input]").forEach((box) => {
       box.addEventListener("click", (e) => e.stopPropagation());
       box.addEventListener("change", () => {
@@ -776,7 +811,7 @@
     try {
       if (sessionStorage.getItem(ADMIN_KEY) === "1") setAdminMode(true);
     } catch (e) {}
-    if (location.hash === "#admin" && openBtn) openBtn.click();
+    if (location.hash === "#admin") openAdmin();
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible" && !document.body.classList.contains("is-admin")) {
         loadAvailability();
@@ -791,12 +826,20 @@
   } catch (e) {}
   applyAssetSources();
   fillPlacePhotos();
-  mountPlan();
-  document.querySelectorAll("[data-media]").forEach(mountCardMedia);
+  try {
+    mountPlan();
+  } catch (e) {}
+  document.querySelectorAll("[data-media]").forEach((host) => {
+    try {
+      mountCardMedia(host);
+    } catch (e) {}
+  });
   wireLightbox();
   wireRentToggles();
   wireAdmin();
-  initCampusMap();
+  try {
+    initCampusMap();
+  } catch (e) {}
   applyLang(lang);
   loadAvailability();
 })();

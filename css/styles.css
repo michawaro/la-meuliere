@@ -989,17 +989,36 @@ h1.eyebrow {
 .admin-entry {
   background: none;
   border: 0;
-  padding: 0;
+  padding: 8px 12px;
+  min-height: 44px;
   color: var(--muted);
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.admin-layer[hidden] { display: none !important; }
+.admin-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+.admin-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(28, 40, 34, 0.45);
+  cursor: pointer;
+}
 .admin-dialog {
+  position: relative;
+  z-index: 1;
   border: 0;
   border-radius: 22px;
   padding: 28px 24px;
@@ -1007,9 +1026,6 @@ h1.eyebrow {
   box-shadow: var(--shadow);
   background: var(--paper);
   color: var(--ink);
-}
-.admin-dialog::backdrop {
-  background: rgba(28, 40, 34, 0.45);
 }
 .admin-dialog h2 {
   margin: 0 0 16px;
@@ -1048,40 +1064,50 @@ h1.eyebrow {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: var(--paper);
   border-radius: 16px;
-  padding: 12px 8px;
+  padding: 14px 10px;
   box-shadow: var(--shadow-sm);
   font-weight: 700;
 }
-.avail-flag {
+.avail-mark {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink);
+  letter-spacing: 0;
   line-height: 1.2;
-  text-transform: none;
 }
-.avail-flag.is-on {
-  background: #2f6f4e;
-  color: #f6faf4;
+.avail-dot {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(36, 54, 44, 0.12);
 }
-.avail-flag.is-off {
-  background: #b42318;
-  color: #f6faf4;
-}
+.avail-mark.is-on .avail-dot { background: #2f6f4e; }
+.avail-mark.is-off .avail-dot { background: #b42318; }
+.avail-text { font-size: 0.9rem; }
 .plan-avail {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   z-index: 4;
   pointer-events: none;
+  padding: 5px 8px 5px 6px;
+  border-radius: 999px;
+  background: rgba(251, 252, 248, 0.92);
+  box-shadow: 0 4px 12px rgba(36, 54, 44, 0.16);
 }
+.plan-avail .avail-dot {
+  width: 14px;
+  height: 14px;
+  flex-basis: 14px;
+}
+.plan-avail .avail-text { font-size: 0.72rem; }
 .room-heading {
   display: flex;
   flex-wrap: wrap;

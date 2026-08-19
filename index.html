@@ -16,7 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/styles.css?v=4" />
+    <link rel="stylesheet" href="css/styles.css?v=5" />
   </head>
   <body>
     <div class="grain" aria-hidden="true"></div>
@@ -114,10 +114,34 @@
           <h2 data-i18n="roomsTitle">A, B, C, D.</h2>
           <p class="section-lead" data-i18n="roomsLead"></p>
           <ul class="avail-board" data-i18n-aria="availBoard" aria-label="Availability">
-            <li><span>A</span> <strong class="avail-flag is-off" data-avail-flag="a"></strong></li>
-            <li><span>B</span> <strong class="avail-flag is-off" data-avail-flag="b"></strong></li>
-            <li><span>C</span> <strong class="avail-flag is-off" data-avail-flag="c"></strong></li>
-            <li><span>D</span> <strong class="avail-flag is-off" data-avail-flag="d"></strong></li>
+            <li>
+              <span>A</span>
+              <span class="avail-mark is-on" data-avail-flag="a">
+                <span class="avail-dot" aria-hidden="true"></span>
+                <span class="avail-text"></span>
+              </span>
+            </li>
+            <li>
+              <span>B</span>
+              <span class="avail-mark is-on" data-avail-flag="b">
+                <span class="avail-dot" aria-hidden="true"></span>
+                <span class="avail-text"></span>
+              </span>
+            </li>
+            <li>
+              <span>C</span>
+              <span class="avail-mark is-on" data-avail-flag="c">
+                <span class="avail-dot" aria-hidden="true"></span>
+                <span class="avail-text"></span>
+              </span>
+            </li>
+            <li>
+              <span>D</span>
+              <span class="avail-mark is-off" data-avail-flag="d">
+                <span class="avail-dot" aria-hidden="true"></span>
+                <span class="avail-text"></span>
+              </span>
+            </li>
           </ul>
         </div>
         <div class="plan-wrap">
@@ -176,7 +200,10 @@
             <div class="room-copy">
               <div class="room-heading">
                 <h3 data-i18n="roomA"></h3>
-                <strong class="avail-flag is-off" data-avail-flag="a"></strong>
+                <span class="avail-mark is-on" data-avail-flag="a">
+                  <span class="avail-dot" aria-hidden="true"></span>
+                  <span class="avail-text"></span>
+                </span>
                 <label class="avail-switch">
                   <input type="checkbox" data-avail-input="a" />
                   <span class="avail-knob" aria-hidden="true"></span>
@@ -197,7 +224,10 @@
             <div class="room-copy">
               <div class="room-heading">
                 <h3 data-i18n="roomB"></h3>
-                <strong class="avail-flag is-off" data-avail-flag="b"></strong>
+                <span class="avail-mark is-on" data-avail-flag="b">
+                  <span class="avail-dot" aria-hidden="true"></span>
+                  <span class="avail-text"></span>
+                </span>
                 <label class="avail-switch">
                   <input type="checkbox" data-avail-input="b" />
                   <span class="avail-knob" aria-hidden="true"></span>
@@ -218,7 +248,10 @@
             <div class="room-copy">
               <div class="room-heading">
                 <h3 data-i18n="roomC"></h3>
-                <strong class="avail-flag is-off" data-avail-flag="c"></strong>
+                <span class="avail-mark is-on" data-avail-flag="c">
+                  <span class="avail-dot" aria-hidden="true"></span>
+                  <span class="avail-text"></span>
+                </span>
                 <label class="avail-switch">
                   <input type="checkbox" data-avail-input="c" />
                   <span class="avail-knob" aria-hidden="true"></span>
@@ -239,7 +272,10 @@
             <div class="room-copy">
               <div class="room-heading">
                 <h3 data-i18n="roomD"></h3>
-                <strong class="avail-flag is-off" data-avail-flag="d"></strong>
+                <span class="avail-mark is-off" data-avail-flag="d">
+                  <span class="avail-dot" aria-hidden="true"></span>
+                  <span class="avail-text"></span>
+                </span>
                 <label class="avail-switch">
                   <input type="checkbox" data-avail-input="d" />
                   <span class="avail-knob" aria-hidden="true"></span>
@@ -425,17 +461,18 @@
       <button type="button" class="admin-entry" id="admin-exit" hidden data-i18n="adminExit">Leave admin</button>
     </footer>
 
-    <dialog class="admin-dialog" id="admin-dialog">
-      <form id="admin-form">
+    <div class="admin-layer" id="admin-dialog" hidden>
+      <button type="button" class="admin-dialog-backdrop" id="admin-backdrop" data-i18n-aria="close" aria-label="Close"></button>
+      <form class="admin-dialog" id="admin-form">
         <h2 data-i18n="adminTitle">Administration</h2>
         <label class="admin-field">
           <span data-i18n="adminCode">Access code</span>
-          <input type="password" id="admin-code" name="code" autocomplete="off" />
+          <input type="password" id="admin-code" name="code" autocomplete="current-password" />
         </label>
         <p class="admin-error" id="admin-error" hidden data-i18n="adminWrong"></p>
         <button type="submit" class="btn btn-primary" data-i18n="adminEnter">Enter</button>
       </form>
-    </dialog>
+    </div>
 
     <div class="lightbox" id="lightbox" hidden>
       <button type="button" class="lightbox-backdrop" id="lightbox-backdrop" data-i18n-aria="close" aria-label="Close"></button>
@@ -451,6 +488,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/availability.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/app.js"></script>
   </body>
