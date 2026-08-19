@@ -119,7 +119,7 @@ window.I18N = {
     enquireEyebrow: "The rooms",
     enquireTitle: "If you want one of them.",
     enquireText:
-      "Availability changes regularly. Get in touch with a short introduction and the room you are interested in — A, B, C or D. To complete a file, please send a passport or national ID card, together with a letter or certificate of enrolment at a school or university. We will reply with all the useful information, in particular the dates of availability. For now, the first rooms become available from 10 September. A booking is confirmed once the first month’s rent has been paid in advance.",
+      "Availability changes regularly. Get in touch with a short introduction and the room you are interested in — A, B, C or D. To complete a file, please send a passport or national ID card, together with a letter or certificate of enrolment at a school or university. We will reply with all the useful information, in particular the dates of availability. A booking is confirmed once the first month’s rent has been paid in advance.",
     enquireBtn: "Write",
     enquireOrMail: "If your mail app does not open:",
     enquireNoMail:
@@ -132,6 +132,15 @@ window.I18N = {
     rentBtn: "See the rent",
     rentA: "Rent: €500 a month, plus a €100 flat service charge.",
     rentStd: "Rent: €400 a month, plus a €100 flat service charge.",
+    available: "Available",
+    unavailable: "Not available",
+    admin: "Admin",
+    adminTitle: "Administration",
+    adminCode: "Access code",
+    adminEnter: "Enter",
+    adminExit: "Leave admin",
+    adminWrong: "Incorrect code.",
+    availBoard: "Availability",
   },
   fr: {
     metaTitle: "Quatre chambres dans une maison en meulière — Bures-sur-Yvette",
@@ -254,7 +263,7 @@ window.I18N = {
     enquireEyebrow: "Les chambres",
     enquireTitle: "Pour réserver une chambre :",
     enquireText:
-      "Les disponibilités évoluent régulièrement. Contactez-nous en vous présentant brièvement et en précisant la chambre qui vous intéresse — A, B, C ou D. Pour constituer un dossier, merci de joindre une pièce d'identité (passeport ou carte nationale d'identité) ainsi qu'une lettre ou un certificat d'inscription dans une école ou une université. Nous vous répondrons avec toutes les informations utiles, notamment les dates de disponibilité. Pour le moment, les premières disponibilités sont à compter du 10 septembre. La réservation sera prise en compte lorsque le premier mois de loyer aura été versé par anticipation.",
+      "Les disponibilités évoluent régulièrement. Contactez-nous en vous présentant brièvement et en précisant la chambre qui vous intéresse — A, B, C ou D. Pour constituer un dossier, merci de joindre une pièce d'identité (passeport ou carte nationale d'identité) ainsi qu'une lettre ou un certificat d'inscription dans une école ou une université. Nous vous répondrons avec toutes les informations utiles, notamment les dates de disponibilité. La réservation sera prise en compte lorsque le premier mois de loyer aura été versé par anticipation.",
     enquireBtn: "Écrire",
     enquireOrMail: "Si la messagerie ne s'ouvre pas :",
     enquireNoMail:
@@ -267,6 +276,15 @@ window.I18N = {
     rentBtn: "Voir le tarif",
     rentA: "Loyer : 500 € par mois, plus 100 € de charges forfaitaires.",
     rentStd: "Loyer : 400 € par mois, plus 100 € de charges forfaitaires.",
+    available: "Disponible",
+    unavailable: "Non disponible",
+    admin: "Admin",
+    adminTitle: "Administration",
+    adminCode: "Code d'accès",
+    adminEnter: "Entrer",
+    adminExit: "Quitter l'admin",
+    adminWrong: "Code incorrect.",
+    availBoard: "Disponibilités",
   },
   de: {
     metaTitle: "Vier Zimmer in einem Meulière-Haus — Bures-sur-Yvette",
@@ -388,7 +406,7 @@ window.I18N = {
     enquireEyebrow: "Die Zimmer",
     enquireTitle: "Wenn Sie eines davon möchten.",
     enquireText:
-      "Die Verfügbarkeit ändert sich regelmäßig. Schreiben Sie uns mit einer kurzen Vorstellung und dem gewünschten Zimmer — A, B, C oder D. Für die Reservierung benötigen wir einen Reisepass oder Personalausweis sowie eine Immatrikulations- oder Aufnahmebescheinigung einer Schule oder Universität. Wir antworten mit allen nützlichen Angaben, insbesondere zu den Verfügbarkeitsterminen. Derzeit werden die ersten Zimmer ab dem 10. September frei. Die Reservierung gilt, sobald die erste Monatsmiete im Voraus entrichtet ist.",
+      "Die Verfügbarkeit ändert sich regelmäßig. Schreiben Sie uns mit einer kurzen Vorstellung und dem gewünschten Zimmer — A, B, C oder D. Für die Reservierung benötigen wir einen Reisepass oder Personalausweis sowie eine Immatrikulations- oder Aufnahmebescheinigung einer Schule oder Universität. Wir antworten mit allen nützlichen Angaben, insbesondere zu den Verfügbarkeitsterminen. Die Reservierung gilt, sobald die erste Monatsmiete im Voraus entrichtet ist.",
     enquireBtn: "Schreiben",
     enquireOrMail: "Falls sich das Mailprogramm nicht öffnet:",
     enquireNoMail:
@@ -401,6 +419,15 @@ window.I18N = {
     rentBtn: "Miete anzeigen",
     rentA: "Miete: 500 € im Monat, zuzüglich 100 € Pauschalnebenkosten.",
     rentStd: "Miete: 400 € im Monat, zuzüglich 100 € Pauschalnebenkosten.",
+    available: "Verfügbar",
+    unavailable: "Nicht verfügbar",
+    admin: "Admin",
+    adminTitle: "Verwaltung",
+    adminCode: "Zugangscode",
+    adminEnter: "Eintreten",
+    adminExit: "Admin verlassen",
+    adminWrong: "Falscher Code.",
+    availBoard: "Verfügbarkeit",
   },
   zh: {
     metaTitle: "米石屋中的四间学生房 — Bures-sur-Yvette",
@@ -518,7 +545,7 @@ window.I18N = {
     enquireEyebrow: "房间",
     enquireTitle: "如果您想入住其中一间。",
     enquireText:
-      "房源情况会定期变化。请发来简短自我介绍，并注明您意向的房间——A、B、C 或 D。办理预订需提供护照或身份证，以及学校或大学的录取/在读证明。我们会回复所有实用信息，尤其是可入住日期。目前，首批房间自 9 月 10 日起可入住。预付第一个月房租后，预订即告确认。",
+      "房源情况会定期变化。请发来简短自我介绍，并注明您意向的房间——A、B、C 或 D。办理预订需提供护照或身份证，以及学校或大学的录取/在读证明。我们会回复所有实用信息，尤其是可入住日期。预付第一个月房租后，预订即告确认。",
     enquireBtn: "写信",
     enquireOrMail: "若邮件软件无法打开：",
     enquireNoMail: "准备好后填入联系邮箱，按钮就会启用。",
@@ -530,5 +557,14 @@ window.I18N = {
     rentBtn: "查看租金",
     rentA: "租金：每月 500 欧元，另加 100 欧元包干杂费。",
     rentStd: "租金：每月 400 欧元，另加 100 欧元包干杂费。",
+    available: "可租",
+    unavailable: "暂不可租",
+    admin: "管理",
+    adminTitle: "管理",
+    adminCode: "访问代码",
+    adminEnter: "进入",
+    adminExit: "退出管理",
+    adminWrong: "代码不正确。",
+    availBoard: "空房情况",
   },
 };

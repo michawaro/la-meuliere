@@ -16,7 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/styles.css?v=3" />
+    <link rel="stylesheet" href="css/styles.css?v=4" />
   </head>
   <body>
     <div class="grain" aria-hidden="true"></div>
@@ -113,6 +113,12 @@
           <p class="eyebrow" data-i18n="roomsEyebrow">The rooms</p>
           <h2 data-i18n="roomsTitle">A, B, C, D.</h2>
           <p class="section-lead" data-i18n="roomsLead"></p>
+          <ul class="avail-board" data-i18n-aria="availBoard" aria-label="Availability">
+            <li><span>A</span> <strong class="avail-flag is-off" data-avail-flag="a"></strong></li>
+            <li><span>B</span> <strong class="avail-flag is-off" data-avail-flag="b"></strong></li>
+            <li><span>C</span> <strong class="avail-flag is-off" data-avail-flag="c"></strong></li>
+            <li><span>D</span> <strong class="avail-flag is-off" data-avail-flag="d"></strong></li>
+          </ul>
         </div>
         <div class="plan-wrap">
           <p class="plan-legend" data-i18n="planLegend">Plan de l'étage</p>
@@ -168,11 +174,17 @@
         <div class="room-cards">
           <article class="room-block" id="space-a">
             <div class="room-copy">
-              <h3 data-i18n="roomA"></h3>
+              <div class="room-heading">
+                <h3 data-i18n="roomA"></h3>
+                <strong class="avail-flag is-off" data-avail-flag="a"></strong>
+                <label class="avail-switch">
+                  <input type="checkbox" data-avail-input="a" />
+                  <span class="avail-knob" aria-hidden="true"></span>
+                </label>
+              </div>
               <p class="tag" data-i18n="roomATag"></p>
               <p data-i18n="roomAText"></p>
               <div class="room-actions">
-                <button type="button" class="text-link" data-open="a" data-i18n="learnMore"></button>
                 <button type="button" class="text-link rent-toggle" data-rent="a" aria-expanded="false" aria-controls="rent-a" data-i18n="rentBtn"></button>
               </div>
               <p class="rent-detail" id="rent-a" hidden data-i18n="rentA"></p>
@@ -183,11 +195,17 @@
           </article>
           <article class="room-block" id="space-b">
             <div class="room-copy">
-              <h3 data-i18n="roomB"></h3>
+              <div class="room-heading">
+                <h3 data-i18n="roomB"></h3>
+                <strong class="avail-flag is-off" data-avail-flag="b"></strong>
+                <label class="avail-switch">
+                  <input type="checkbox" data-avail-input="b" />
+                  <span class="avail-knob" aria-hidden="true"></span>
+                </label>
+              </div>
               <p class="tag" data-i18n="roomBTag"></p>
               <p data-i18n="roomBText"></p>
               <div class="room-actions">
-                <button type="button" class="text-link" data-open="b" data-i18n="learnMore"></button>
                 <button type="button" class="text-link rent-toggle" data-rent="b" aria-expanded="false" aria-controls="rent-b" data-i18n="rentBtn"></button>
               </div>
               <p class="rent-detail" id="rent-b" hidden data-i18n="rentStd"></p>
@@ -198,11 +216,17 @@
           </article>
           <article class="room-block" id="space-c">
             <div class="room-copy">
-              <h3 data-i18n="roomC"></h3>
+              <div class="room-heading">
+                <h3 data-i18n="roomC"></h3>
+                <strong class="avail-flag is-off" data-avail-flag="c"></strong>
+                <label class="avail-switch">
+                  <input type="checkbox" data-avail-input="c" />
+                  <span class="avail-knob" aria-hidden="true"></span>
+                </label>
+              </div>
               <p class="tag" data-i18n="roomCTag"></p>
               <p data-i18n="roomCText"></p>
               <div class="room-actions">
-                <button type="button" class="text-link" data-open="c" data-i18n="learnMore"></button>
                 <button type="button" class="text-link rent-toggle" data-rent="c" aria-expanded="false" aria-controls="rent-c" data-i18n="rentBtn"></button>
               </div>
               <p class="rent-detail" id="rent-c" hidden data-i18n="rentStd"></p>
@@ -213,11 +237,17 @@
           </article>
           <article class="room-block" id="space-d">
             <div class="room-copy">
-              <h3 data-i18n="roomD"></h3>
+              <div class="room-heading">
+                <h3 data-i18n="roomD"></h3>
+                <strong class="avail-flag is-off" data-avail-flag="d"></strong>
+                <label class="avail-switch">
+                  <input type="checkbox" data-avail-input="d" />
+                  <span class="avail-knob" aria-hidden="true"></span>
+                </label>
+              </div>
               <p class="tag" data-i18n="roomDTag"></p>
               <p data-i18n="roomDText"></p>
               <div class="room-actions">
-                <button type="button" class="text-link" data-open="d" data-i18n="learnMore"></button>
                 <button type="button" class="text-link rent-toggle" data-rent="d" aria-expanded="false" aria-controls="rent-d" data-i18n="rentBtn"></button>
               </div>
               <p class="rent-detail" id="rent-d" hidden data-i18n="rentStd"></p>
@@ -239,7 +269,6 @@
             <div class="room-copy">
               <h3 data-i18n="kitchen"></h3>
               <p data-i18n="kitchenText"></p>
-              <button type="button" class="text-link" data-open="kitchen" data-i18n="learnMore"></button>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="kitchen"></div>
@@ -249,7 +278,6 @@
             <div class="room-copy">
               <h3 data-i18n="bathroom"></h3>
               <p data-i18n="bathroomText"></p>
-              <button type="button" class="text-link" data-open="bathroom" data-i18n="learnMore"></button>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="bathroom"></div>
@@ -259,7 +287,6 @@
             <div class="room-copy">
               <h3 data-i18n="toilets"></h3>
               <p data-i18n="toiletsText"></p>
-              <button type="button" class="text-link" data-open="toilets" data-i18n="learnMore"></button>
             </div>
             <div class="room-stage">
               <div class="card-media" data-media="toilets"></div>
@@ -394,27 +421,21 @@
 
     <footer class="site-footer">
       <span data-i18n="footerNote"></span>
+      <button type="button" class="admin-entry" id="admin-open" data-i18n="admin">Admin</button>
+      <button type="button" class="admin-entry" id="admin-exit" hidden data-i18n="adminExit">Leave admin</button>
     </footer>
 
-    <div class="viewer" id="viewer" hidden>
-      <button type="button" class="viewer-backdrop" id="viewer-backdrop" data-i18n-aria="close" aria-label="Close"></button>
-      <div class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
-        <div class="viewer-bar">
-          <div>
-            <p class="eyebrow" id="viewer-kicker"></p>
-            <h2 id="viewer-title"></h2>
-          </div>
-          <div class="viewer-tabs" id="viewer-tabs"></div>
-          <button type="button" class="btn-close" id="viewer-close">
-            <span data-i18n="close">Close</span>
-          </button>
-        </div>
-        <p class="viewer-hint" id="viewer-hint" data-i18n="dragHint"></p>
-        <div class="viewer-stage" id="viewer-stage"></div>
-        <p class="viewer-copy" id="viewer-copy"></p>
-        <p class="rent-detail viewer-rent" id="viewer-rent" hidden></p>
-      </div>
-    </div>
+    <dialog class="admin-dialog" id="admin-dialog">
+      <form id="admin-form">
+        <h2 data-i18n="adminTitle">Administration</h2>
+        <label class="admin-field">
+          <span data-i18n="adminCode">Access code</span>
+          <input type="password" id="admin-code" name="code" autocomplete="off" />
+        </label>
+        <p class="admin-error" id="admin-error" hidden data-i18n="adminWrong"></p>
+        <button type="submit" class="btn btn-primary" data-i18n="adminEnter">Enter</button>
+      </form>
+    </dialog>
 
     <div class="lightbox" id="lightbox" hidden>
       <button type="button" class="lightbox-backdrop" id="lightbox-backdrop" data-i18n-aria="close" aria-label="Close"></button>
@@ -431,7 +452,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="js/config.js"></script>
     <script src="js/i18n.js"></script>
-    <script src="js/viewer.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

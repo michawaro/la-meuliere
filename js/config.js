@@ -2,6 +2,7 @@
 window.SITE_CONFIG = {
   contactEmail: "familleange+locatif@gmail.com",
   mediaBase: "",
+  adminCode: "4480AaBb!",
   media: {
     place: {
       photos: [

@@ -67,9 +67,6 @@
         el.textContent = pack.photosView || "";
       }
     });
-    document.querySelectorAll(".plan-more").forEach((el) => {
-      el.textContent = pack.learnMore || "";
-    });
     document.querySelectorAll(".plan-film-badge").forEach((el) => {
       el.textContent = pack.hoverFilm || "";
     });
@@ -91,9 +88,9 @@
     try {
       localStorage.setItem(LANG_KEY, lang);
     } catch (e) {}
-    if (window.BuresViewer) window.BuresViewer.refreshCopy();
     refreshCampusPopups();
     wireEnquire();
+    paintAvailability();
   }
 
   function enquireMailto() {
@@ -211,28 +208,33 @@
     io.observe(wrap);
   }
 
+  function enterVideoFullscreen(video) {
+    if (!video) return;
+    const req =
+      video.requestFullscreen ||
+      video.webkitRequestFullscreen ||
+      video.webkitEnterFullscreen;
+    if (!req) return;
+    const done = Promise.resolve(req.call(video));
+    if (done && done.then) {
+      done
+        .then(() => {
+          video.muted = false;
+          const p = video.play();
+          if (p && p.catch) p.catch(function () {});
+        })
+        .catch(function () {});
+    } else {
+      video.muted = false;
+      video.play().catch(function () {});
+    }
+  }
+
   function bindFullscreenVideo(video) {
     video.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const req =
-        video.requestFullscreen ||
-        video.webkitRequestFullscreen ||
-        video.webkitEnterFullscreen;
-      if (!req) return;
-      const done = Promise.resolve(req.call(video));
-      if (done && done.then) {
-        done
-          .then(() => {
-            video.muted = false;
-            const p = video.play();
-            if (p && p.catch) p.catch(function () {});
-          })
-          .catch(function () {});
-      } else {
-        video.muted = false;
-        video.play().catch(function () {});
-      }
+      enterVideoFullscreen(video);
     });
     const onFs = () => {
       if (!isVideoFullscreen(video)) video.muted = true;
@@ -396,6 +398,7 @@
           '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.4 7.2v9.6L17.2 12z"/></svg>';
         cell.appendChild(play);
         cell.setAttribute("aria-label", t("hall") + " — " + t("playFilm"));
+        bindFullscreenVideo(video);
         if (!reduceMotion()) {
           const tryPlay = () => {
             video.muted = true;
@@ -405,11 +408,12 @@
           tryPlay();
           video.addEventListener("canplay", tryPlay);
         }
-      } else {
-        const badge = document.createElement("span");
-        badge.className = "plan-more";
-        badge.textContent = t("learnMore");
-        cell.appendChild(badge);
+      }
+      if (id === "a" || id === "b" || id === "c" || id === "d") {
+        const flag = document.createElement("strong");
+        flag.className = "avail-flag plan-avail is-off";
+        flag.setAttribute("data-avail-flag", id);
+        cell.appendChild(flag);
       }
     });
   }
@@ -514,40 +518,24 @@
     });
   }
 
-  function openSpace(id) {
-    if (window.BuresViewer) window.BuresViewer.open(id, "video");
-  }
-
   function goToSpace(id) {
+    if (id === "hall") {
+      const video = document.querySelector('.plan-cell[data-space="hall"] video');
+      if (video) {
+        enterVideoFullscreen(video);
+        return;
+      }
+    }
     const video = document.getElementById("video-" + id);
     const card = document.getElementById("space-" + id);
     const target = video || card;
     if (target) {
       target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
-      return;
     }
-    openSpace(id);
   }
 
   document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.addEventListener("click", () => applyLang(btn.dataset.lang));
-  });
-
-  document.querySelectorAll("[data-open]").forEach((el) => {
-    el.addEventListener("click", (e) => {
-      if (e.target.closest(".card-nav, .card-dots")) return;
-      const id = el.getAttribute("data-open");
-      if (!id) return;
-      e.preventDefault();
-      openSpace(id);
-    });
-    el.addEventListener("keydown", (e) => {
-      if (e.target.closest(".card-nav, .card-dots")) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openSpace(el.getAttribute("data-open"));
-      }
-    });
   });
 
   document.querySelectorAll(".plan-cell[data-space]").forEach((el) => {
@@ -666,6 +654,136 @@
     });
   }
 
+  const ROOM_IDS = ["a", "b", "c", "d"];
+  const AVAIL_KEY = "bures_avail";
+  const ADMIN_KEY = "bures_admin";
+  let avail = { a: false, b: false, c: false, d: false };
+
+  function normalizeAvail(data) {
+    const next = { a: false, b: false, c: false, d: false };
+    if (!data || typeof data !== "object") return next;
+    ROOM_IDS.forEach((id) => {
+      next[id] = data[id] === true;
+    });
+    return next;
+  }
+
+  function paintAvailability() {
+    ROOM_IDS.forEach((id) => {
+      const on = avail[id] === true;
+      document.querySelectorAll('[data-avail-flag="' + id + '"]').forEach((el) => {
+        el.classList.toggle("is-on", on);
+        el.classList.toggle("is-off", !on);
+        el.textContent = on ? t("available") : t("unavailable");
+      });
+      const input = document.querySelector('[data-avail-input="' + id + '"]');
+      if (input) input.checked = on;
+    });
+  }
+
+  function persistAvailability() {
+    try {
+      localStorage.setItem(AVAIL_KEY, JSON.stringify(avail));
+    } catch (e) {}
+  }
+
+  async function loadAvailability() {
+    let remote = null;
+    try {
+      const res = await fetch("data/availability.json?t=" + Date.now(), { cache: "no-store" });
+      if (res.ok) remote = normalizeAvail(await res.json());
+    } catch (e) {}
+    let local = null;
+    try {
+      local = JSON.parse(localStorage.getItem(AVAIL_KEY) || "null");
+      if (local) local = normalizeAvail(local);
+    } catch (e) {}
+    if (document.body.classList.contains("is-admin") && local) avail = local;
+    else if (remote) avail = remote;
+    else if (local) avail = local;
+    else avail = { a: false, b: false, c: false, d: false };
+    paintAvailability();
+  }
+
+  function setAvail(id, on) {
+    if (ROOM_IDS.indexOf(id) < 0) return;
+    avail[id] = !!on;
+    persistAvailability();
+    paintAvailability();
+  }
+
+  function setAdminMode(on) {
+    document.body.classList.toggle("is-admin", on);
+    try {
+      sessionStorage.setItem(ADMIN_KEY, on ? "1" : "");
+    } catch (e) {}
+    const openBtn = document.getElementById("admin-open");
+    const exitBtn = document.getElementById("admin-exit");
+    if (openBtn) openBtn.hidden = on;
+    if (exitBtn) exitBtn.hidden = !on;
+    loadAvailability();
+  }
+
+  function wireAdmin() {
+    const dialog = document.getElementById("admin-dialog");
+    const form = document.getElementById("admin-form");
+    const input = document.getElementById("admin-code");
+    const error = document.getElementById("admin-error");
+    const openBtn = document.getElementById("admin-open");
+    const exitBtn = document.getElementById("admin-exit");
+    const expected = (window.SITE_CONFIG && window.SITE_CONFIG.adminCode) || "";
+    if (openBtn && dialog) {
+      openBtn.addEventListener("click", () => {
+        if (error) error.hidden = true;
+        if (input) input.value = "";
+        if (dialog.showModal) dialog.showModal();
+        else dialog.setAttribute("open", "");
+        if (input) input.focus();
+      });
+    }
+    if (exitBtn) {
+      exitBtn.addEventListener("click", () => setAdminMode(false));
+    }
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = input ? String(input.value) : "";
+        if (expected && code === expected) {
+          if (error) error.hidden = true;
+          setAdminMode(true);
+          if (dialog.close) dialog.close();
+          else dialog.removeAttribute("open");
+        } else if (error) {
+          error.hidden = false;
+        }
+      });
+    }
+    if (dialog) {
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog && dialog.close) dialog.close();
+      });
+    }
+    document.querySelectorAll("[data-avail-input]").forEach((box) => {
+      box.addEventListener("click", (e) => e.stopPropagation());
+      box.addEventListener("change", () => {
+        if (!document.body.classList.contains("is-admin")) {
+          box.checked = avail[box.getAttribute("data-avail-input")] === true;
+          return;
+        }
+        setAvail(box.getAttribute("data-avail-input"), box.checked);
+      });
+    });
+    try {
+      if (sessionStorage.getItem(ADMIN_KEY) === "1") setAdminMode(true);
+    } catch (e) {}
+    if (location.hash === "#admin" && openBtn) openBtn.click();
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && !document.body.classList.contains("is-admin")) {
+        loadAvailability();
+      }
+    });
+  }
+
   let lang = "en";
   try {
     const saved = localStorage.getItem(LANG_KEY);
@@ -677,6 +795,8 @@
   document.querySelectorAll("[data-media]").forEach(mountCardMedia);
   wireLightbox();
   wireRentToggles();
+  wireAdmin();
   initCampusMap();
   applyLang(lang);
+  loadAvailability();
 })();
