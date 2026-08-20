@@ -1,1 +1,1 @@
-window.SITE_AVAIL = {"a":true,"b":true,"c":true,"d":true};
+window.SITE_AVAIL = {"a":true,"b":true,"c":true,"d":false};
