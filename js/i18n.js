@@ -122,7 +122,7 @@ window.I18N = {
     enquireText:
       "Availability changes regularly. Contact us with a short introduction and the room you are interested in — A, B, C or D. To put together an application, please attach an identity document (passport or national ID card) as well as a letter or certificate of enrolment at a school or university. We will reply with all the useful information, in particular the dates of availability. The booking will be taken into account once the first month’s rent has been paid in advance.",
     enquireBtn: "Write",
-    enquireOrMail: 'Prefer the “Write” button, but if the mail app does not open, contact us directly:',
+    enquireOrMail: 'Prefer the <strong>“Write”</strong> button, but if the mail app does not open, contact us directly:',
     enquireNoMail:
       "Add a contact email when you're ready — the button will wake up.",
     footerNote: "Four rooms · second floor · Bures-sur-Yvette",
@@ -275,7 +275,7 @@ window.I18N = {
     enquireText:
       "Les disponibilités évoluent régulièrement. Contactez-nous en vous présentant brièvement et en précisant la chambre qui vous intéresse — A, B, C ou D. Pour constituer un dossier, merci de joindre une pièce d'identité (passeport ou carte nationale d'identité) ainsi qu'une lettre ou un certificat d'inscription dans une école ou une université. Nous vous répondrons avec toutes les informations utiles, notamment les dates de disponibilité. La réservation sera prise en compte lorsque le premier mois de loyer aura été versé par anticipation.",
     enquireBtn: "Écrire",
-    enquireOrMail: "Utiliser de préférence le bouton « Écrire », mais si la messagerie ne s'ouvre pas, contacter alors directement :",
+    enquireOrMail: "Utiliser de préférence le bouton <strong>« Écrire »</strong>, mais si la messagerie ne s'ouvre pas, contacter alors directement :",
     enquireNoMail:
       "Ajoutez une adresse de contact quand vous voudrez — le bouton s'allumera.",
     footerNote: "Quatre chambres · deuxième étage · Bures-sur-Yvette",
@@ -427,7 +427,7 @@ window.I18N = {
     enquireText:
       "Die Verfügbarkeiten ändern sich regelmäßig. Kontaktieren Sie uns mit einer kurzen Vorstellung und nennen Sie das Zimmer, das Sie interessiert — A, B, C oder D. Für die Zusammenstellung eines Dossiers fügen Sie bitte einen Ausweis (Reisepass oder Personalausweis) sowie ein Schreiben oder eine Immatrikulationsbescheinigung einer Schule oder Universität bei. Wir antworten mit allen nützlichen Informationen, insbesondere zu den Verfügbarkeitsterminen. Die Reservierung wird berücksichtigt, sobald die erste Monatsmiete im Voraus entrichtet wurde.",
     enquireBtn: "Schreiben",
-    enquireOrMail: "Am besten den Button „Schreiben“ verwenden; öffnet sich das Mailprogramm nicht, dann direkt kontaktieren:",
+    enquireOrMail: "Am besten den Button <strong>„Schreiben“</strong> verwenden; öffnet sich das Mailprogramm nicht, dann direkt kontaktieren:",
     enquireNoMail:
       "Fügen Sie eine Kontaktadresse hinzu, wenn Sie soweit sind — dann wird der Button aktiv.",
     footerNote: "Vier Zimmer · zweiter Stock · Bures-sur-Yvette",
@@ -575,7 +575,7 @@ window.I18N = {
     enquireText:
       "房源情况会定期变化。请联系我们，简短自我介绍，并注明您意向的房间——A、B、C 或 D。组成申请材料时，请附上身份证件（护照或身份证），以及学校或大学的入学/在读证明或信函。我们会回复所有实用信息，尤其是可入住日期。预付第一个月房租后，预订即予以登记。",
     enquireBtn: "写信",
-    enquireOrMail: "请优先使用“写信”按钮；若邮件软件无法打开，请直接联系：",
+    enquireOrMail: "请优先使用<strong>“写信”</strong>按钮；若邮件软件无法打开，请直接联系：",
     enquireNoMail: "准备好后填入联系邮箱，按钮就会启用。",
     footerNote: "四间房 · 二楼 · Bures-sur-Yvette",
     close: "关闭",
