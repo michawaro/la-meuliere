@@ -773,8 +773,11 @@ h1.eyebrow {
 .viewer-rent {
   margin: 0 0 8px;
 }
-[id^="space-"],
-[id^="video-"] {
+#place,
+#rooms,
+#shared,
+#around,
+#enquire {
   scroll-margin-top: 92px;
 }
 .card-slides {
